@@ -5,5 +5,6 @@ const Injector = require('./src/injector');
 
 module.exports = {
   DependencyConfig,
-  Injector
+  Injector,
+  InjectorNode
 };

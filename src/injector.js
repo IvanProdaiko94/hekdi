@@ -1,6 +1,6 @@
 'use strict';
 const DependencyConfig = require('./config');
-const { bootstrap, errors } = require('./utils');
+const errors = require('./errors');
 
 const inject = function(dependencyName) {
   const config = this.getConfigOf(dependencyName);
@@ -77,17 +77,6 @@ class Injector {
     }
     this.resolvers.set(config.name, strategies[config.resolutionStrategy](config.name).bind(this));
     this.dependencies.set(config.name, config);
-  }
-
-  /**
-   * @param src {String} Absolute path to src
-   * @param recursive {Boolean}
-   */
-  bootstrap(src, recursive) {
-    bootstrap(src, recursive, DependencyConfig, []).forEach(dependency => this.register(dependency));
-    // const modules = bootstrap(src, recursive, DependencyConfig);
-    // const fn = dependency => this.register(dependency);
-    // Array.isArray(modules) ? modules.forEach(fn) : fn(modules);
   }
 
   /**

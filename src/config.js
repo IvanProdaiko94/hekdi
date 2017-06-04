@@ -1,5 +1,5 @@
 'use strict';
-const { errors } = require('./utils');
+const errors = require('./errors');
 /**
  * DependencyConfig
  */
