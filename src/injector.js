@@ -64,10 +64,11 @@ class Injector {
    * @return {Injector}
    */
   register(dependency) {
-    const config = dependency.config;
     if (!(dependency instanceof DependencyConfig)) {
       throw new Error(errors.incorrectConfigInstance(DependencyConfig.name));
-    } else if (this.dependencies.has(config.name)) {
+    }
+    const config = dependency.config;
+    if (this.dependencies.has(config.name)) {
       throw new Error(errors.dependencyIsRegistered(config.name));
     } else if (!strategies.hasOwnProperty(config.resolutionStrategy)) {
       throw new Error(errors.incorrectResolutionStrategy(config.resolutionStrategy, strategies));
@@ -79,16 +80,14 @@ class Injector {
   }
 
   /**
-   * @param src {String}
+   * @param src {String} Absolute path to src
    * @param recursive {Boolean}
    */
   bootstrap(src, recursive) {
-    bootstrap(src, recursive, DependencyConfig)
-      .forEach(dependency => {
-        if (dependency instanceof DependencyConfig) {
-          this.register(dependency);
-        }
-      });
+    bootstrap(src, recursive, DependencyConfig, []).forEach(dependency => this.register(dependency));
+    // const modules = bootstrap(src, recursive, DependencyConfig);
+    // const fn = dependency => this.register(dependency);
+    // Array.isArray(modules) ? modules.forEach(fn) : fn(modules);
   }
 
   /**

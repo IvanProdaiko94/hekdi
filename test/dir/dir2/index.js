@@ -1,8 +1,8 @@
 'use strict';
 const EventEmitter = require('@nodeart/event_emitter');
-const DependencyConfig = require('../../../src/injector').DependencyConfig;
+const injector = require('../../../src/injector');
 
-module.exports = new DependencyConfig({
+module.exports = injector.DIConfig.create({
   name: 'EventEmitterSingleton',
   resolutionStrategy: 'singleton',
   dependencies: [],

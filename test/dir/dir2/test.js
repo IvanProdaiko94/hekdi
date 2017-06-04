@@ -1,7 +1,7 @@
 'use strict';
-const DependencyConfig = require('../../../src/injector').DependencyConfig;
+const injector = require('../../../src/injector');
 
-module.exports = new DependencyConfig({
+module.exports = injector.DIConfig.create({
   name: 'DependencyInDirInDir2Test',
   resolutionStrategy: 'value',
   dependencies: ['Dependency'],

@@ -1,10 +1,10 @@
 'use strict';
-const DependencyConfig = require('../../src/injector').DependencyConfig;
+const injector = require('../../src/injector');
 
 class X { }
 
-module.exports = new DependencyConfig({
-  name: 'DependencyInDir',
+module.exports = injector.DIConfig.create({
+  name: 'DependencyInDirTest',
   resolutionStrategy: 'singleton',
   dependencies: ['Dependency'],
   value: X

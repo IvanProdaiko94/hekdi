@@ -2,8 +2,5 @@
 const Injector = require('../src/injector');
 const injector = new Injector();
 
-// console.log(__filename);
-
-injector.bootstrapSync('./', true);
-
-// injector.getConfigOf('X');
+injector.bootstrap('C:\\OpenSource\\Injector\\test', true);
+console.log(injector);
