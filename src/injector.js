@@ -1,54 +1,94 @@
 'use strict';
 const DependencyConfig = require('./config');
-const Boot = require('./bootstrap');
+const { bootstrap, errors } = require('./utils');
 
-const afterBootstrap = function(dependencies = []) {
-  dependencies.forEach(dependency => this.register(
-      dependency.name,
-      dependency.config
-    )
-  );
-  return this;
+const inject = function(dependencyName) {
+  const config = this.getConfigOf(dependencyName);
+  return new config.value(...(config.dependencies || []).map(name => this.resolve(name)));
+};
+
+const strategies = {
+  /**
+   * creates a new instance each time
+   * @param dependencyName {string}
+   */
+  factory: dependencyName => function() {
+    return inject.call(this, dependencyName);
+  },
+  /**
+   * return the same instance of constructor each time
+   * @param dependencyName {string}
+   */
+  singleton: dependencyName => {
+    let instance;
+    return function() {
+      if (!instance) {
+        instance = inject.call(this, dependencyName);
+      }
+      return instance;
+    };
+  },
+  /**
+   * return link on the of the value
+   * @param dependencyName {string}
+   */
+  value: dependencyName => function() {
+    return this.getConfigOf(dependencyName).value;
+  }
 };
 
 class Injector {
-  static get DependencyConfig() { return DependencyConfig; }
+  static get DIConfig() { return DependencyConfig; }
 
   constructor() {
-    Object.defineProperty(this, 'dependencies', { value: new Map() });
-  }
-
-  resolve() {
-
-  }
-
-  register(dependency) {
-    if (this.dependencies.has(dependency.name)) {
-      throw new Error(`${dependency.name} already registered`);
-    }
-    return this;
+    Object.defineProperties(this, {
+      dependencies: { value: new Map() },
+      resolvers: { value: new Map() }
+    });
   }
 
   /**
-   * @param src
-   * @type String
-   * @param recursive
-   * @type Boolean
+   * @param dependencyName {String}
+   * @return {any}
    */
-  bootstrapSync(src, recursive) {
-    return afterBootstrap.apply(this, Boot.bootstrapSync(src, recursive));
+  resolve(dependencyName) {
+    if (this.resolvers.has(dependencyName)) {
+      return this.resolvers.get(dependencyName)();
+    } else {
+      throw new Error(errors.unmetDependency(dependencyName));
+    }
   }
 
   /**
-   * @param src
-   * @type String
-   * @param recursive
-   * @type Boolean
+   * @param dependency {DependencyConfig}
+   * @return {Injector}
+   */
+  register(dependency) {
+    const config = dependency.config;
+    if (!(dependency instanceof DependencyConfig)) {
+      throw new Error(errors.incorrectConfigInstance(DependencyConfig.name));
+    } else if (this.dependencies.has(config.name)) {
+      throw new Error(errors.dependencyIsRegistered(config.name));
+    } else if (!strategies.hasOwnProperty(config.resolutionStrategy)) {
+      throw new Error(errors.incorrectResolutionStrategy(config.resolutionStrategy, strategies));
+    } else if ((config.dependencies || []).indexOf(config.name) !== -1) {
+      throw new Error(errors.selfDependency(config.name));
+    }
+    this.resolvers.set(config.name, strategies[config.resolutionStrategy](config.name).bind(this));
+    this.dependencies.set(config.name, config);
+  }
+
+  /**
+   * @param src {String}
+   * @param recursive {Boolean}
    */
   bootstrap(src, recursive) {
-    return Boot
-      .bootstrap(src, recursive)
-      .then(afterBootstrap.bind(this));
+    bootstrap(src, recursive, DependencyConfig)
+      .forEach(dependency => {
+        if (dependency instanceof DependencyConfig) {
+          this.register(dependency);
+        }
+      });
   }
 
   /**

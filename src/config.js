@@ -1,5 +1,5 @@
 'use strict';
-
+const { errors } = require('./utils');
 /**
  * DependencyConfig
  */
@@ -15,7 +15,6 @@ class DependencyConfig {
     const requiredProps = {
       'name': false,
       'resolutionStrategy': false,
-      'dependencies': false,
       'value': false
     };
     Object.keys(config).forEach(key => {
@@ -25,11 +24,14 @@ class DependencyConfig {
     });
     Object.keys(requiredProps).forEach(key => {
       if (requiredProps[key] === false) {
-        throw new Error(`Required property is ${requiredProps[key]} unmet`);
+        throw new Error(errors.configPropUnmet(key));
       }
     });
-    this.name = config.name;
     this.config = config;
+  }
+
+  static create(config) {
+    return new DependencyConfig(config);
   }
 }
 
