@@ -42,8 +42,8 @@ class Injector {
 
   constructor() {
     Object.defineProperties(this, {
-      dependencies: { value: new Map() },
-      resolvers: { value: new Map() }
+      dependencies: { value: new Map(), enumerable: true },
+      resolvers: { value: new Map(), enumerable: true }
     });
   }
 
