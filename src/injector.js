@@ -35,7 +35,11 @@ const strategies = {
   value: dependencyName => function() {
     return this.getConfigOf(dependencyName).value;
   },
-  constant: dependencyName => function () {
+  /**
+   * return link on the of the value
+   * @param dependencyName {string}
+   */
+  constant: dependencyName => function() {
     return this.getConfigOf(dependencyName).value;
   }
 
@@ -64,33 +68,32 @@ class Injector {
   }
 
   /**
-   * @param dependency {DependencyConfig}
+   * @param dependencies {Array<DependencyConfig>|DependencyConfig}
    * @return {Injector}
    */
-  register(dependency) {
-    if (!(dependency instanceof DependencyConfig)) {
-      throw new Error(errors.incorrectConfigInstance(DependencyConfig.name));
-    }
-    const config = dependency.config;
-    const deps = config.dependencies || [];
-    const dConf = this.getConfigOf(config.name);
-    if (dConf && dConf.resolutionStrategy === 'constant') {
-      throw new Error(errors.dependencyIsRegistered(config.name));
-    } else if (!strategies.hasOwnProperty(config.resolutionStrategy)) {
-      throw new Error(errors.incorrectResolutionStrategy(config.resolutionStrategy, strategies));
-    } else if (deps.indexOf(config.name) !== -1) {
-      throw new Error(errors.selfDependency(config.name));
-    }
-    deps.forEach(dep => {
-      if (this.dependencies.has(dep)) {
-        const depsToCheck = this.getConfigOf(dep).dependencies || [];
-        if (depsToCheck.indexOf(config.name) !== -1) {
-          throw new Error(errors.circularDependency(config.name, dep));
-        }
+  register(...dependencies) {
+    dependencies.forEach(dependency => {
+      const config = dependency.config;
+      const deps = config.dependencies || [];
+      const dConf = this.getConfigOf(config.name);
+      if (dConf && dConf.resolutionStrategy === 'constant') {
+        throw new Error(errors.dependencyIsRegistered(config.name));
+      } else if (!strategies.hasOwnProperty(config.resolutionStrategy)) {
+        throw new Error(errors.incorrectResolutionStrategy(config.resolutionStrategy, strategies));
+      } else if (deps.indexOf(config.name) !== -1) {
+        throw new Error(errors.selfDependency(config.name));
       }
+      deps.forEach(dep => {
+        if (this.dependencies.has(dep)) {
+          const depsToCheck = this.getConfigOf(dep).dependencies || [];
+          if (depsToCheck.indexOf(config.name) !== -1) {
+            throw new Error(errors.circularDependency(config.name, dep));
+          }
+        }
+      });
+      this.resolvers.set(config.name, strategies[config.resolutionStrategy](config.name).bind(this));
+      this.dependencies.set(config.name, config);
     });
-    this.resolvers.set(config.name, strategies[config.resolutionStrategy](config.name).bind(this));
-    this.dependencies.set(config.name, config);
   }
 
   /**

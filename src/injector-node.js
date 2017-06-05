@@ -1,6 +1,6 @@
 'use strict';
 const { lstatSync, readdirSync } = require('fs');
-const { extname } = require('path');
+const { extname, dirname } = require('path');
 const DependencyConfig = require('./config');
 const Injector = require('./injector');
 
@@ -13,16 +13,18 @@ const addModule = (src, configClass, modules) => {
   }
 };
 
+const addSlash = src => src + (isWindows ? '\\' : '/');
+
 const bootstrap = (src, recursive, configClass, modules) => {
   const stat = lstatSync(src);
   if (stat.isDirectory()) {
     const dir = readdirSync(src);
     if (recursive) {
-      dir.map(fName => bootstrap(src + (isWindows ? '\\' : '/') + fName, recursive, configClass, modules));
+      dir.map(fName => bootstrap(addSlash(src) + fName, recursive, configClass, modules));
     } else {
       dir.forEach(fName => {
         if (extname(fName) === '.js') {
-          addModule(src + (isWindows ? '\\' : '/') + fName, configClass, modules);
+          addModule(addSlash(src) + fName, configClass, modules);
         }
       });
     }
@@ -34,12 +36,13 @@ const bootstrap = (src, recursive, configClass, modules) => {
 
 class InjectorNode extends Injector {
   /**
-   * @param srcs {Array<String>} Absolute path to src
+   * @param sources {Array<String>} relative to launch file paths
    * @param recursive {Boolean}
    */
-  bootstrap(srcs, recursive) {
-    srcs.forEach(
-      src => bootstrap(src, recursive, DependencyConfig, [])
+  bootstrap(sources, recursive) {
+    const cwd = addSlash(dirname(require.main.filename));
+    sources.forEach(
+      src => bootstrap(cwd + src, recursive, DependencyConfig, [])
         .forEach(dependency => this.register(dependency))
     );
   }

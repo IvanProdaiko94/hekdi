@@ -3,7 +3,7 @@ const EventEmitter = require('@nodeart/event_emitter');
 const Injector = require('../src/injector-node');
 const injector = new Injector();
 
-injector.bootstrap(['C:\\OpenSource\\Injector\\test'], true);
+injector.bootstrap(['.\\'], true);
 
 const x = Injector.DIConfig.create({
   name: 'X',
@@ -13,7 +13,6 @@ const x = Injector.DIConfig.create({
     constructor(events, y) {
       this.y = y;
       this.events = events;
-      console.log(this);
     }
   }
 });
@@ -26,11 +25,12 @@ const y = Injector.DIConfig.create({
   }
 });
 
-injector.register(x);
-injector.register(y);
+injector.register(x, y);
 injector.register(Injector.DIConfig.create({
   name: 'events',
   resolutionStrategy: 'singleton',
   value: EventEmitter
 }));
 injector.resolve('X');
+
+console.log(injector);
