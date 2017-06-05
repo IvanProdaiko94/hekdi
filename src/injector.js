@@ -68,13 +68,22 @@ class Injector {
       throw new Error(errors.incorrectConfigInstance(DependencyConfig.name));
     }
     const config = dependency.config;
+    const deps = config.dependencies || [];
     if (this.dependencies.has(config.name)) {
       throw new Error(errors.dependencyIsRegistered(config.name));
     } else if (!strategies.hasOwnProperty(config.resolutionStrategy)) {
       throw new Error(errors.incorrectResolutionStrategy(config.resolutionStrategy, strategies));
-    } else if ((config.dependencies || []).indexOf(config.name) !== -1) {
+    } else if (deps.indexOf(config.name) !== -1) {
       throw new Error(errors.selfDependency(config.name));
     }
+    deps.forEach(dep => {
+      if (this.dependencies.has(dep)) {
+        const depsToCheck = this.getConfigOf(dep).dependencies || [];
+        if (depsToCheck.indexOf(config.name) !== -1) {
+          throw new Error(errors.circularDependency(config.name, dep));
+        }
+      }
+    });
     this.resolvers.set(config.name, strategies[config.resolutionStrategy](config.name).bind(this));
     this.dependencies.set(config.name, config);
   }

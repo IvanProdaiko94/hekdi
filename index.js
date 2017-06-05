@@ -1,10 +1,7 @@
 'use strict';
 
-const DependencyConfig = require('./src/config');
-const Injector = require('./src/injector');
-
 module.exports = {
-  DependencyConfig,
-  Injector,
-  InjectorNode
+  DependencyConfig: require('./src/config'),
+  Injector: require('./src/injector'),
+  InjectorNode: require('./src/injector-node')
 };

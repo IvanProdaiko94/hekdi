@@ -6,16 +6,28 @@ const Injector = require('./injector');
 
 const isWindows = process.platform === 'win32';
 
+const addModule = (src, configClass, modules) => {
+  const module = require(src);
+  if (module instanceof configClass) {
+    modules.push(module);
+  }
+};
+
 const bootstrap = (src, recursive, configClass, modules) => {
   const stat = lstatSync(src);
-  if (stat.isDirectory() && recursive) {
+  if (stat.isDirectory()) {
     const dir = readdirSync(src);
-    dir.map(fName => bootstrap(src + (isWindows ? '\\' : '/') + fName, recursive, configClass, modules));
-  } else if (stat.isFile() && extname(src) === '.js') {
-    const module = require(src);
-    if (module instanceof configClass) {
-      modules.push(module);
+    if (recursive) {
+      dir.map(fName => bootstrap(src + (isWindows ? '\\' : '/') + fName, recursive, configClass, modules));
+    } else {
+      dir.forEach(fName => {
+        if (extname(fName) === '.js') {
+          addModule(src + (isWindows ? '\\' : '/') + fName, configClass, modules);
+        }
+      });
     }
+  } else if (stat.isFile() && extname(src) === '.js') {
+    addModule(src, configClass, modules);
   }
   return modules;
 };
@@ -32,6 +44,5 @@ class InjectorNode extends Injector {
     );
   }
 }
-
 
 module.exports = InjectorNode;
