@@ -49,7 +49,7 @@ Also `InjectorNode` class is available. It can be useful if you don't want to us
 in your code.
 Just call a `bootstrap` method with the list of folders or files you'd like to register and `InjectorNode` do everything
 else.
-If module exports and instance of `DependencyConfig` class (which is the same to) `Injector.DIConfig.create` result
+If module exports and instance of `DependencyConfig` class (which is the same to `Injector.DIConfig.create`) result
 than it will be registered.
 If you want a recursive search just pass `true` as a second argument to `bootstrap` method.
 
