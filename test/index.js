@@ -33,5 +33,4 @@ injector.register(Injector.DIConfig.create({
   resolutionStrategy: 'singleton',
   value: EventEmitter
 }));
-console.log(injector);
 injector.resolve('X');

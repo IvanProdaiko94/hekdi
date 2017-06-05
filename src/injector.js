@@ -34,7 +34,11 @@ const strategies = {
    */
   value: dependencyName => function() {
     return this.getConfigOf(dependencyName).value;
+  },
+  constant: dependencyName => function () {
+    return this.getConfigOf(dependencyName).value;
   }
+
 };
 
 class Injector {
@@ -69,7 +73,8 @@ class Injector {
     }
     const config = dependency.config;
     const deps = config.dependencies || [];
-    if (this.dependencies.has(config.name)) {
+    const dConf = this.getConfigOf(config.name);
+    if (dConf && dConf.resolutionStrategy === 'constant') {
       throw new Error(errors.dependencyIsRegistered(config.name));
     } else if (!strategies.hasOwnProperty(config.resolutionStrategy)) {
       throw new Error(errors.incorrectResolutionStrategy(config.resolutionStrategy, strategies));
