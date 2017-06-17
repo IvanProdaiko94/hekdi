@@ -10,8 +10,6 @@
   "license": "ISC",
   "devDependencies": {
     "@nodeart/event_emitter": "^1.2.1",
-    "chai": "^4.0.1",
-    "eslint": "^3.19.0",
-    "mocha": "^3.4.2"
+    "eslint": "^3.19.0"
   }
 }

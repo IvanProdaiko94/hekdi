@@ -57,7 +57,7 @@ class Injector {
 
   /**
    * @param dependencyName {String}
-   * @return {any}
+   * @return {*}
    */
   resolve(dependencyName) {
     if (this.resolvers.has(dependencyName)) {
@@ -98,6 +98,7 @@ class Injector {
 
   /**
    * @param dependencyName {String}
+   * @return {*}
    */
   getConfigOf(dependencyName) {
     return this.dependencies.get(dependencyName);
