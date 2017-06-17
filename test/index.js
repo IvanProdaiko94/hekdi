@@ -3,7 +3,9 @@ const EventEmitter = require('@nodeart/event_emitter');
 const Injector = require('../src/injector-node');
 const injector = new Injector();
 
-injector.bootstrap(['.\\'], true);
+const isWindows = process.platform === 'win32';
+
+injector.bootstrap([`.${isWindows ? '\\' : '/'}`], true);
 
 const x = Injector.DIConfig.create({
   name: 'X',
