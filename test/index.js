@@ -29,13 +29,13 @@ const y = InjectorNode.DIConfig.create({
   }
 });
 
-injector.register(x, y);
-
-injector.register(InjectorNode.DIConfig.create({
+const eventEmitter = InjectorNode.DIConfig.create({
   name: 'eventEmitter',
   resolutionStrategy: 'singleton',
   value: EventEmitter
-}));
+});
+
+injector.register(x, y, eventEmitter);
 
 assert.equal(injector.dependencies.size, 9, 'There must be 9 dependencies inside');
 assert.deepEqual(

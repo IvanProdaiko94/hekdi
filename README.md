@@ -2,7 +2,7 @@
 
 This module exposes a simple `Injector` class.
 
-Basic usage:
+## Basic usage:
 
 ```javascript
 const { Injector } = require('DI');
@@ -32,19 +32,26 @@ const depB = Injector.DIConfig.create({
   value: 'B'
 });
 
+const depC = Injector.DIConfig.create({
+  name: 'c',
+  resolutionStrategy: 'singleton',
+  value: 'C'
+});
 
-injector.register(depX, depA, depB);
+
+injector.register(depX, depA, depC);
 injector.resolve('X');
 
 // A B
 ```
 
-There are **four** resolutionStrategies available:
+### There are **four** resolutionStrategies available:
 - `factory` each time a new instance will be created.
 - `singleton` only one instance will be created.
 - `value` just will be returned.
 - `constant` the same as `value` but can't be reassign.
 
+### InjectorNode
 Also `InjectorNode` class is available. It can be useful if you don't want to use `require` everywhere
 in your code.
 Just call a `bootstrap` method with the list of folders or files you'd like to register and `InjectorNode` do everything
