@@ -1,11 +1,11 @@
 # Dependency Injection
 
-This module exposes a simple `Injector` class.
+1This module provides dependency injection for browser and node.
 
 ## Basic usage:
 
 ```javascript
-const { Injector } = require('DI');
+const { Injector } = require('@nodeart/injector');
 const injector = new Injector();
 class X {
   constructor(a, b) {
@@ -51,22 +51,21 @@ injector.resolve('X');
 - `value` just will be returned.
 - `constant` the same as `value` but can't be reassign.
 
-### InjectorNode
-Also `InjectorNode` class is available. It can be useful if you don't want to use `require` everywhere
-in your code.
+### Node.js usage
+Alongside with `Injector`, `InjectorNode` class is available. It inherits from `Ibjector` and in addition to 
+main functionality it can search for modules inside file system.
+It can be useful if you write a big node.js project and do not want to manage dependencies on your own.
 Just call a `bootstrap` method with the list of folders or files you'd like to register and `InjectorNode` do everything
-else.
-If module exports and instance of `DependencyConfig` class (which is the same to `Injector.DIConfig.create`) result
-than it will be registered.
+else for you. To be registered module must exports and instance of `DependencyConfig` class 
+(which is the same as calling `Injector.DIConfig.create` method over an object).
 If you want a recursive search just pass `true` as a second argument to `bootstrap` method.
 
-Usage:
 ```javascript
-const { InjectorNode } = require('DI');
+const { InjectorNode } = require('@nodeart/injector');
 const injector = new InjectorNode();
 
 injector.bootstrap([
-  `.`,
+  '.',
   '../dependencies',
   '../dependency_file.js'
 ], true)
