@@ -1,6 +1,12 @@
 # Dependency Injection
 
-1This module provides dependency injection for browser and node.
+This module provides dependency injection for browser and node.
+
+### There are **four** resolutionStrategies available:
+- `factory` each time a new instance will be created.
+- `singleton` only one instance will be created.
+- `value` just will be returned.
+- `constant` the same as `value` but can't be reassign.
 
 ## Basic usage:
 
@@ -45,14 +51,8 @@ injector.resolve('X');
 // A B
 ```
 
-### There are **four** resolutionStrategies available:
-- `factory` each time a new instance will be created.
-- `singleton` only one instance will be created.
-- `value` just will be returned.
-- `constant` the same as `value` but can't be reassign.
-
-### Node.js usage
-Alongside with `Injector`, `InjectorNode` class is available. It inherits from `Ibjector` and in addition to 
+## Node.js usage
+Alongside with `Injector`, `InjectorNode` class is available. It inherits from `Injector` and in addition to 
 main functionality it can search for modules inside file system.
 It can be useful if you write a big node.js project and do not want to manage dependencies on your own.
 Just call a `bootstrap` method with the list of folders or files you'd like to register and `InjectorNode` do everything
@@ -68,5 +68,5 @@ injector.bootstrap([
   '.',
   '../dependencies',
   '../dependency_file.js'
-], true)
+], true);
 ```
