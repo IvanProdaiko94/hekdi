@@ -10,7 +10,6 @@ class DependencyConfig {
    * @param config.resolutionStrategy {string} The name of the user.
    * @param config.value class or value to be resolved.
    * @param [config.dependencies] {Array<string>} Dependencies array required for dependency creation.
-   * @param [config.alias] {string} Another name of dependency
    */
   constructor(config) {
     const requiredProps = {

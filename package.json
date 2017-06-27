@@ -1,6 +1,6 @@
 {
   "name": "@nodeart/injector",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Depedency injection framework for node.js",
   "main": "index.js",
   "scripts": {

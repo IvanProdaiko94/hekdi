@@ -41,8 +41,16 @@ const strategies = {
    */
   constant: dependencyName => function() {
     return this.getConfigOf(dependencyName).value;
+  },
+  /**
+   * return other dependency by using value as a name
+   * @param dependencyName {string}
+   */
+  alias: dependencyName => function() {
+    const { value } = this.getConfigOf(dependencyName);
+    const { name } = this.getConfigOf(value);
+    return this.resolve(name);
   }
-
 };
 
 class Injector {
@@ -91,13 +99,8 @@ class Injector {
           }
         }
       });
-      const resolver = strategies[config.resolutionStrategy](config.name).bind(this);
-      this.resolvers.set(config.name, resolver);
+      this.resolvers.set(config.name, strategies[config.resolutionStrategy](config.name).bind(this));
       this.dependencies.set(config.name, config);
-      if (config.alias) {
-        this.resolvers.set(config.alias, resolver);
-        this.dependencies.set(config.alias, config);
-      }
     });
   }
 

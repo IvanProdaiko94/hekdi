@@ -44,6 +44,13 @@ const depC = Injector.DIConfig.create({
   value: 'C'
 });
 
+const alias = Injector.DIConfig.create({
+  name: 'aliasForC',
+  resolutionStrategy: 'alias',
+  value: 'C' // actual dependency
+});
+
+
 
 injector.register(depX, depA, depC);
 injector.resolve('X');

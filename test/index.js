@@ -12,17 +12,11 @@ injector.bootstrap([`.${isWindows ? '\\' : '/'}`], true);
 const x = InjectorNode.DIConfig.create({
   name: 'X',
   resolutionStrategy: 'factory',
-  dependencies: ['eventEmitter', 'Y', 'events'],
+  dependencies: ['eventEmitter', 'Y'],
   value: class X {
-    constructor(events, y, eventsAlias) {
+    constructor(events, y) {
       this.y = y;
       this.events = events;
-      this.eventsAlias = eventsAlias;
-      assert.deepEqual(
-        this.events,
-        this.eventsAlias,
-        'Alias test fail'
-      );
     }
   }
 });
@@ -35,12 +29,16 @@ const y = InjectorNode.DIConfig.create({
 
 const eventEmitter = InjectorNode.DIConfig.create({
   name: 'eventEmitter',
-  alias: 'events',
   resolutionStrategy: 'singleton',
   value: EventEmitter
 });
 
 injector.register(x, y, eventEmitter);
+injector.register(InjectorNode.DIConfig.create({
+  name: 'events',
+  resolutionStrategy: 'alias',
+  value: 'eventEmitter'
+}));
 
 assert.equal(injector.dependencies.size, 10, 'There must be 10 dependencies inside');
 assert.deepEqual(
@@ -52,4 +50,11 @@ assert.notEqual(
   injector.resolve('X'),
   injector.resolve('X'),
   'Resolution strategy `factory` expects new instance on every resolution'
+);
+assert.deepEqual(
+  injector.resolve('eventEmitter'),
+  injector.resolve('events'),
+  'Resolution strategy `alias` ' +
+  'should return instance of `eventEmitter` and as far as it is singleton, ' +
+  'there should be one instance'
 );
