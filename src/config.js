@@ -6,10 +6,11 @@ const errors = require('./errors');
 class DependencyConfig {
   /**
    * @param config {Object} Config of dependency
-   * @param config.name {String} The name of the dependency.
-   * @param config.resolutionStrategy {String} The name of the user.
-   * @param config.value {any} class or value to be resolved.
-   * @param config.dependencies {Array<String>} Dependencies array required for dependency creation.
+   * @param config.name {string} The name of the dependency.
+   * @param config.resolutionStrategy {string} The name of the user.
+   * @param config.value class or value to be resolved.
+   * @param [config.dependencies] {Array<string>} Dependencies array required for dependency creation.
+   * @param [config.alias] {string} Another name of dependency
    */
   constructor(config) {
     const requiredProps = {

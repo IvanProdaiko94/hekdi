@@ -12,11 +12,17 @@ injector.bootstrap([`.${isWindows ? '\\' : '/'}`], true);
 const x = InjectorNode.DIConfig.create({
   name: 'X',
   resolutionStrategy: 'factory',
-  dependencies: ['eventEmitter', 'Y'],
+  dependencies: ['eventEmitter', 'Y', 'events'],
   value: class X {
-    constructor(events, y) {
+    constructor(events, y, eventsAlias) {
       this.y = y;
       this.events = events;
+      this.eventsAlias = eventsAlias;
+      assert.deepEqual(
+        this.events,
+        this.eventsAlias,
+        'Alias test fail'
+      );
     }
   }
 });
@@ -24,20 +30,19 @@ const x = InjectorNode.DIConfig.create({
 const y = InjectorNode.DIConfig.create({
   name: 'Y',
   resolutionStrategy: 'factory',
-  value: class Y {
-    constructor() {}
-  }
+  value: class Y { }
 });
 
 const eventEmitter = InjectorNode.DIConfig.create({
   name: 'eventEmitter',
+  alias: 'events',
   resolutionStrategy: 'singleton',
   value: EventEmitter
 });
 
 injector.register(x, y, eventEmitter);
 
-assert.equal(injector.dependencies.size, 9, 'There must be 9 dependencies inside');
+assert.equal(injector.dependencies.size, 10, 'There must be 10 dependencies inside');
 assert.deepEqual(
   injector.resolve('eventEmitter'),
   injector.resolve('eventEmitter'),

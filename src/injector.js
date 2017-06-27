@@ -91,8 +91,13 @@ class Injector {
           }
         }
       });
-      this.resolvers.set(config.name, strategies[config.resolutionStrategy](config.name).bind(this));
+      const resolver = strategies[config.resolutionStrategy](config.name).bind(this);
+      this.resolvers.set(config.name, resolver);
       this.dependencies.set(config.name, config);
+      if (config.alias) {
+        this.resolvers.set(config.alias, resolver);
+        this.dependencies.set(config.alias, config);
+      }
     });
   }
 
