@@ -2,11 +2,12 @@
 
 This module provides dependency injection for browser and node.
 
-### There are **four** resolutionStrategies available:
-- `factory` each time a new instance will be created.
-- `singleton` only one instance will be created.
-- `value` just will be returned.
-- `constant` the same as `value` but can't be reassign.
+### There are **five** resolutionStrategies available:
+- `factory` - each time a new instance will be created.
+- `singleton` - only one instance will be created.
+- `value` - just will be returned.
+- `constant` - the same as `value` but can't be reassign.
+- `alias` - used to create an alias for some dependency.
 
 ## Basic usage:
 
