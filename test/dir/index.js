@@ -1,11 +1,14 @@
 'use strict';
 const Injector = require('../../src/injector');
 
-class Y { }
+class Y {
+  static get $inject() {
+    return ['Dependency'];
+  }
+}
 
 module.exports = Injector.DIConfig.create({
   name: 'DependencyInDir',
   resolutionStrategy: 'singleton',
-  dependencies: ['Dependency'],
   value: Y
 });

@@ -5,6 +5,5 @@ const Injector = require('../../../src/injector');
 module.exports = Injector.DIConfig.create({
   name: 'EventEmitterSingleton',
   resolutionStrategy: 'singleton',
-  dependencies: [],
   value: EventEmitter
 });

@@ -7,16 +7,19 @@ const injector = new InjectorNode();
 
 const isWindows = process.platform === 'win32';
 
-injector.bootstrap([`.${isWindows ? '\\' : '/'}`], true);
+injector.bootstrap([`.${isWindows ? '\\' : '/'}`], [], true);
 
 const x = InjectorNode.DIConfig.create({
   name: 'X',
   resolutionStrategy: 'factory',
-  dependencies: ['eventEmitter', 'Y'],
   value: class X {
     constructor(events, y) {
       this.y = y;
       this.events = events;
+    }
+
+    static get $inject() {
+      return ['eventEmitter', 'Y'];
     }
   }
 });
@@ -39,7 +42,6 @@ injector.register(InjectorNode.DIConfig.create({
   resolutionStrategy: 'alias',
   value: 'eventEmitter'
 }));
-
 assert.equal(injector.dependencies.size, 10, 'There must be 10 dependencies inside');
 assert.deepEqual(
   injector.resolve('eventEmitter'),
@@ -58,3 +60,4 @@ assert.deepEqual(
   'should return instance of `eventEmitter` and as far as it is singleton, ' +
   'there should be one instance'
 );
+console.log('All tests passed successfully');

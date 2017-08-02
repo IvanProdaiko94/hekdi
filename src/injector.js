@@ -4,7 +4,7 @@ const errors = require('./errors');
 
 const inject = function(dependencyName) {
   const config = this.getConfigOf(dependencyName);
-  return new config.value(...(config.dependencies || []).map(name => this.resolve(name)));
+  return new config.value(...(config.value.$inject || []).map(name => this.resolve(name)));
 };
 
 const strategies = {
@@ -82,18 +82,18 @@ class Injector {
   register(...dependencies) {
     dependencies.forEach(dependency => {
       const config = dependency.config;
-      const deps = config.dependencies || [];
+      const inject = config.value.$inject || [];
       const dConf = this.getConfigOf(config.name);
       if (dConf && dConf.resolutionStrategy === 'constant') {
         throw new Error(errors.dependencyIsRegistered(config.name));
       } else if (!strategies.hasOwnProperty(config.resolutionStrategy)) {
         throw new Error(errors.incorrectResolutionStrategy(config.resolutionStrategy, strategies));
-      } else if (deps.indexOf(config.name) !== -1) {
+      } else if (inject.indexOf(config.name) !== -1) {
         throw new Error(errors.selfDependency(config.name));
       }
-      deps.forEach(dep => {
+      inject.forEach(dep => {
         if (this.dependencies.has(dep)) {
-          const depsToCheck = this.getConfigOf(dep).dependencies || [];
+          const depsToCheck = this.getConfigOf(dep).value.$inject || [];
           if (depsToCheck.indexOf(config.name) !== -1) {
             throw new Error(errors.circularDependency(config.name, dep));
           }

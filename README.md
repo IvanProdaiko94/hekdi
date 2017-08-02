@@ -18,12 +18,15 @@ class X {
   constructor(a, b) {
     console.log(a, b);
   }
+  
+  static get $inject() {
+    return ['a', 'b'];
+  }
 }
 
 const depX = Injector.DIConfig.create({
   name: 'X',
   resolutionStrategy: 'factory',
-  dependencies: ['a', 'b'],
   value: X
 });
 
