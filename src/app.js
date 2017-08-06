@@ -2,7 +2,7 @@
 
 class App {
   constructor() {
-    this.modules = [];
+    this.modules = new Set();
   }
 
   module(moduleToBeRegistered) {
@@ -12,5 +12,10 @@ class App {
     }
     return moduleToBeRegistered;
   }
+
+  static createApp() {
+    return new App();
+  }
 }
 
+module.exports = App.createApp;
