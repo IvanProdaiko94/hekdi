@@ -27,8 +27,8 @@ class Injector {
    * @param dependencies {Map}
    */
   addImports(dependencies) {
-    dependencies.forEach((value, key) => {
-      this.dependencies.set(key, value);
+    dependencies.forEach((dependencyConfig, key) => {
+      this.dependencies.set(key, dependencyConfig);
     });
   }
 

@@ -9,11 +9,10 @@ class App {
   }
 
   module(moduleConfig) {
-    let newModule;
     if (!(moduleConfig instanceof Module)) {
-      newModule = Module.createModule(moduleConfig);
+      return Module.createModule(moduleConfig);
     }
-    return newModule;
+    return moduleConfig;
   }
 
   bootstrap(moduleConfig) {

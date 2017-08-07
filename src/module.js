@@ -21,13 +21,15 @@ class Module {
     this.injector.register(config.declarations || []);
 
     if (config.exports) {
-      const deps = this.injector.dependencies;
+      const dependencies = this.injector.dependencies;
       if (config.exports === '*') {
-        this.exports = new Map(deps);
+        this.exports = new Map(dependencies);
       } else {
         this.exports = new Map();
-        this.injector.dependencies.forEach((value, key) => {
-          this.exports.set(key, value);
+        dependencies.forEach((value, key) => {
+          if (value.belongTo === this.name) {
+            this.exports.set(key, value);
+          }
         });
       }
     }
