@@ -38,8 +38,7 @@ class Injector {
    * @return {Map}
    */
   register(dependencies) {
-    dependencies.map(dependency => {
-      const config = dependency.config;
+    dependencies.map(config => {
       const inject = config.value.$inject || [];
       const dConf = this.getConfigOf(config.name);
       if (dConf && dConf.strategy === 'constant') {

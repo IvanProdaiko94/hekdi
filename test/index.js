@@ -18,4 +18,6 @@ app.bootstrap({
 });
 
 const alias = app.resolve('Alias');
+const dependency = app.resolve('dependency');
 console.log(alias);
+console.log(dependency);

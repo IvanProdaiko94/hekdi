@@ -13,7 +13,7 @@ class Module {
     if (config.imports) {
       config.imports.forEach(module => {
         if (module.exports) {
-          this.injector.addImports(module.imports);
+          this.injector.addImports(module.exports);
         }
       });
     }
