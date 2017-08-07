@@ -1,20 +1,28 @@
 'use strict';
+const Module = require('./module');
+
+let app;
 
 class App {
   constructor() {
-    this.modules = new Set();
+    this.main = null;
   }
 
-  module(moduleToBeRegistered) {
-    this.modules.push(moduleToBeRegistered);
-    if (this.modules.imports) {
-      this.modules.push(...this.modules.imports);
+  module(moduleConfig) {
+    let newModule;
+    if (!(moduleConfig instanceof Module)) {
+      newModule = Module.createModule(moduleConfig);
     }
-    return moduleToBeRegistered;
+    return newModule;
+  }
+
+  bootstrap(moduleConfig) {
+    this.main = this.module(moduleConfig);
   }
 
   static createApp() {
-    return new App();
+    if (!app) app = new App();
+    return app;
   }
 }
 

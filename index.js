@@ -1,7 +1,8 @@
 'use strict';
 
+const Module = require('./src/module');
+
 module.exports = {
-  DependencyConfig: require('./src/config'),
-  Injector: require('./src/injector'),
-  InjectorNode: require('./src/injector-node')
+  createApp: require('./src/app'),
+  createModule: Module.createModule
 };

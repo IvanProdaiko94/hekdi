@@ -26,31 +26,31 @@ class X {
 
 const depX = Injector.DIConfig.create({
   name: 'X',
-  resolutionStrategy: 'factory',
+  strategy: 'factory',
   value: X
 });
 
 const depA = Injector.DIConfig.create({
   name: 'a',
-  resolutionStrategy: 'value',
+  strategy: 'value',
   value: 'A'
 });
 
 const depB = Injector.DIConfig.create({
   name: 'b',
-  resolutionStrategy: 'constant',
+  strategy: 'constant',
   value: 'B'
 });
 
 const depC = Injector.DIConfig.create({
   name: 'c',
-  resolutionStrategy: 'singleton',
+  strategy: 'singleton',
   value: 'C'
 });
 
 const alias = Injector.DIConfig.create({
   name: 'aliasForC',
-  resolutionStrategy: 'alias',
+  strategy: 'alias',
   value: 'C' // actual dependency
 });
 

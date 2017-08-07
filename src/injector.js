@@ -1,17 +1,15 @@
 'use strict';
-const DependencyConfig = require('./config');
-const errors = require('./errors');
+const errors = require('./utils/errors');
 const strategies = require('./utils/stratagies');
 
 class Injector {
-  static get DIConfig() { return DependencyConfig; }
-  static createInjector() { return new Injector(); }
-
-  constructor() {
-    Object.defineProperties(this, {
-      dependencies: { value: new Map(), enumerable: true },
-      resolvers: { value: new Map(), enumerable: true }
-    });
+  /**
+   * @param moduleName {string}
+   */
+  constructor(moduleName) {
+    this.belongTo = moduleName;
+    this.dependencies = new Map();
+    this.resolvers = new Map();
   }
 
   /**
@@ -22,23 +20,32 @@ class Injector {
     if (this.resolvers.has(dependencyName)) {
       return this.resolvers.get(dependencyName)();
     } else {
-      throw new Error(errors.unmetDependency(dependencyName));
+      throw new ReferenceError(errors.unmetDependency(this.belongTo, dependencyName));
     }
   }
 
   /**
-   * @param dependencies {Array<DependencyConfig>|DependencyConfig}
-   * @return {Injector}
+   * @param resolvers {Map}
    */
-  register(...dependencies) {
-    dependencies.forEach(dependency => {
+  addImports(resolvers) {
+    resolvers.forEach((value, key) => {
+      this.resolvers.set(key, value);
+    });
+  }
+
+  /**
+   * @param dependencies {Array<Object>}
+   * @return {Map}
+   */
+  register(dependencies) {
+    dependencies.map(dependency => {
       const config = dependency.config;
       const inject = config.value.$inject || [];
       const dConf = this.getConfigOf(config.name);
-      if (dConf && dConf.resolutionStrategy === 'constant') {
+      if (dConf && dConf.strategy === 'constant') {
         throw new Error(errors.dependencyIsRegistered(config.name));
-      } else if (!strategies.hasOwnProperty(config.resolutionStrategy)) {
-        throw new Error(errors.incorrectResolutionStrategy(config.resolutionStrategy, strategies));
+      } else if (!strategies.hasOwnProperty(config.strategy)) {
+        throw new Error(errors.incorrectResolutionStrategy(config.strategy, strategies));
       } else if (inject.indexOf(config.name) !== -1) {
         throw new Error(errors.selfDependency(config.name));
       }
@@ -50,7 +57,7 @@ class Injector {
           }
         }
       });
-      this.resolvers.set(config.name, strategies[config.resolutionStrategy](config.name).bind(this));
+      this.resolvers.set(config.name, strategies[config.strategy](config.name).bind(this));
       this.dependencies.set(config.name, config);
     });
   }
@@ -64,4 +71,4 @@ class Injector {
   }
 }
 
-module.exports = Injector.createInjector;
+module.exports = Injector;
