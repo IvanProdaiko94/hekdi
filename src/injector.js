@@ -9,7 +9,6 @@ class Injector {
   constructor(moduleName) {
     this.belongTo = moduleName;
     this.dependencies = new Map();
-    this.resolvers = new Map();
   }
 
   /**
@@ -17,19 +16,19 @@ class Injector {
    * @return {*}
    */
   resolve(dependencyName) {
-    if (this.resolvers.has(dependencyName)) {
-      return this.resolvers.get(dependencyName)();
+    if (this.dependencies.has(dependencyName)) {
+      return this.dependencies.get(dependencyName).resolver();
     } else {
       throw new ReferenceError(errors.unmetDependency(this.belongTo, dependencyName));
     }
   }
 
   /**
-   * @param resolvers {Map}
+   * @param dependencies {Map}
    */
-  addImports(resolvers) {
-    resolvers.forEach((value, key) => {
-      this.resolvers.set(key, value);
+  addImports(dependencies) {
+    dependencies.forEach((value, key) => {
+      this.dependencies.set(key, value);
     });
   }
 
@@ -56,7 +55,8 @@ class Injector {
           }
         }
       });
-      this.resolvers.set(config.name, strategies[config.strategy](config.name).bind(this));
+      config.resolver = strategies[config.strategy](config.name).bind(this);
+      config.belongTo = this.belongTo;
       this.dependencies.set(config.name, config);
     });
   }

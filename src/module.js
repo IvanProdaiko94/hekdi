@@ -21,12 +21,12 @@ class Module {
     this.injector.register(config.declarations || []);
 
     if (config.exports) {
-      const resolvers = this.injector.resolvers;
+      const deps = this.injector.dependencies;
       if (config.exports === '*') {
-        this.exports = new Map(resolvers);
+        this.exports = new Map(deps);
       } else {
         this.exports = new Map();
-        this.injector.resolvers.forEach((value, key) => {
+        this.injector.dependencies.forEach((value, key) => {
           this.exports.set(key, value);
         });
       }
