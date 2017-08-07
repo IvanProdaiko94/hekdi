@@ -20,6 +20,10 @@ class App {
     this.main = this.module(moduleConfig);
   }
 
+  resolve(dependencyName) {
+    return this.main.injector.resolve(dependencyName);
+  }
+
   static createApp() {
     if (!app) app = new App();
     return app;
