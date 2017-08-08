@@ -19,7 +19,7 @@ class Dependency {
 module.exports = createModule({
   name: 'AnotherModule',
   declarations: [
-    { name: 'dependency', strategy: 'constant',  value: Dependency }
+    { name: 'dependency', strategy: 'factory',  value: Dependency }
   ],
   imports: [ sharedModule ],
   exports: '*'

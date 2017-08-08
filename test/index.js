@@ -6,18 +6,18 @@
 const createApp = require('../src/app');
 const app = createApp();
 
-app.bootstrap({
-  name: 'AppModule',
-  declarations: [
-    { name: 'Alias', strategy: 'alias', value: 'dependency' }
-  ],
-  imports: [
-    require('./modules/shared.module'),
-    require('./modules/another.module'),
-  ]
-});
+// {
+//     name: 'AppModule',
+//         declarations: [
+//     { name: 'Alias', strategy: 'alias', value: 'dependency' }
+// ],
+//     imports: [
+//     require('./modules/shared.module'),
+//     require('./modules/another.module'),
+// ]
+// }
 
-const alias = app.resolve('Alias');
+app.bootstrap(require('./modules/another.module'));
+
 const dependency = app.resolve('dependency');
-console.log(alias);
-console.log(dependency);
+console.log(dependency.toString());

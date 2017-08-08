@@ -7,7 +7,7 @@ const { createModule } = require('../../src/module');
 
 class X {
   constructor() {
-    this.isTest = true;
+    console.log('isTest=', true);
   }
 }
 

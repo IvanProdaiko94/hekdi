@@ -26,9 +26,10 @@ class Module {
         this.exports = new Map(dependencies);
       } else {
         this.exports = new Map();
-        dependencies.forEach((value, key) => {
-          if (value.belongTo === this.name) {
-            this.exports.set(key, value);
+        config.exports.forEach(dependencyName => {
+          const dependencyConfig = this.injector.getConfigOf(dependencyName);
+          if (dependencyConfig.belongTo === this.name) {
+            this.exports.set(dependencyName, dependencyConfig);
           }
         });
       }
