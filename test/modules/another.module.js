@@ -22,5 +22,6 @@ module.exports = createModule({
     { name: 'dependency', strategy: 'factory',  value: Dependency }
   ],
   imports: [ sharedModule ],
-  exports: '*'
+  // if export all here, than all of the dependencies from 'sharedModule' will be exported as well
+  exports: ['dependency']
 });

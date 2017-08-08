@@ -3,21 +3,17 @@
  */
 'use strict';
 
-const createApp = require('../src/app');
-const app = createApp();
+const app = require('../src/app');
 
-// {
-//     name: 'AppModule',
-//         declarations: [
-//     { name: 'Alias', strategy: 'alias', value: 'dependency' }
-// ],
-//     imports: [
-//     require('./modules/shared.module'),
-//     require('./modules/another.module'),
-// ]
-// }
+app.bootstrap({
+  name: 'AppModule',
+  declarations: [
+    { name: 'Alias', strategy: 'alias', value: 'dependency' }
+  ],
+  imports: [
+    require('./modules/another.module')
+  ]
+});
 
-app.bootstrap(require('./modules/another.module'));
-
-const dependency = app.resolve('dependency');
-console.log(dependency.toString());
+//const dependency = app.resolve('Alias');
+app.main.injector.dependencies.forEach((val, key) => console.log(val, key));

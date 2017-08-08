@@ -1,8 +1,6 @@
 'use strict';
 const Module = require('./module');
 
-let app;
-
 class App {
   constructor() {
     this.main = null;
@@ -22,11 +20,6 @@ class App {
   resolve(dependencyName) {
     return this.main.injector.resolve(dependencyName);
   }
-
-  static createApp() {
-    if (!app) app = new App();
-    return app;
-  }
 }
 
-module.exports = App.createApp;
+module.exports = new App();
