@@ -3,7 +3,7 @@
  */
 
 'use strict';
-const { createModule } = require('../../src/module');
+const { createModule } = require('../../../src/module');
 const sharedModule = require('./shared.module');
 
 class Dependency {

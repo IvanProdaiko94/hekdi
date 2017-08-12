@@ -3,7 +3,7 @@
  */
 'use strict';
 
-const app = require('../src/app');
+const app = require('../../src/app');
 
 app.bootstrap({
   name: 'AppModule',

@@ -3,7 +3,7 @@
  */
 
 'use strict';
-const { createModule } = require('../../src/module');
+const { createModule } = require('../../../src/module');
 
 class X {
   constructor() {

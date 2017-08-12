@@ -4,13 +4,14 @@
   "description": "Depedency injection framework for node.js",
   "main": "index.js",
   "scripts": {
-    "test": "node ./test"
+    "test": "mocha ./test/unit/*.js"
   },
   "author": "Ivan Prodaiko",
   "license": "MIT",
   "devDependencies": {
-    "@nodeart/event_emitter": "^1.2.1",
-    "eslint": "^3.19.0"
+    "chai": "^4.1.1",
+    "eslint": "^3.19.0",
+    "mocha": "^3.5.0"
   },
   "repository": {
     "type": "git",
