@@ -1,8 +1,8 @@
 'use strict';
 
 const { expect } = require('chai');
-const Injector = require('../../src/injector');
-const Module = require('../../src/module');
+const Injector = require('../src/injector');
+const Module = require('../src/module');
 
 describe('injector', () => {
   describe('register dependency', () => {

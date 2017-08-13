@@ -2,8 +2,8 @@
 
 const { expect } = require('chai');
 
-const DI = require('../../src/di');
-const Module = require('../../src/module');
+const DI = require('../src/di');
+const Module = require('../src/module');
 
 describe('di', () => {
   const di = new DI();

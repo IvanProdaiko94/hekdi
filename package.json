@@ -4,7 +4,7 @@
   "description": "Depedency injection framework for node.js",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./test/unit/*.js"
+    "test": "mocha ./test/**/*.spec.js"
   },
   "author": "Ivan Prodaiko",
   "license": "MIT",

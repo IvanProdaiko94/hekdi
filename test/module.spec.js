@@ -4,7 +4,7 @@
 
 'use strict';
 
-const Module = require('../../src/module');
+const Module = require('../src/module');
 
 describe('Module', () => {
 
