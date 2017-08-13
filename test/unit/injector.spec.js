@@ -76,9 +76,9 @@ describe('injector', () => {
         const d1 = injector.resolve('D1');
         expect(d1).to.equal('123');
         expect(() => {
-         injector.register(
-           { name: 'D1', strategy: 'value', value: '12' }
-         );
+          injector.register(
+            { name: 'D1', strategy: 'value', value: '12' }
+          );
         }).to.throw(Error);
       });
 
