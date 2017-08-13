@@ -20,6 +20,10 @@ class DI {
   resolve(dependencyName) {
     return this.main.injector.resolve(dependencyName);
   }
+
+  static create() {
+    return new DI();
+  }
 }
 
 module.exports = DI;

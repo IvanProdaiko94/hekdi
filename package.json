@@ -1,6 +1,6 @@
 {
-  "name": "@nodeart/injector",
-  "version": "0.1.6",
+  "name": "node-DI",
+  "version": "1.0.0",
   "description": "Depedency injection framework for node.js",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,8 @@
     "di",
     "dependency",
     "injector",
-    "injection"
+    "injection",
+    "dependency-injection"
   ],
   "engines": {
     "node": ">=6.0.0"
