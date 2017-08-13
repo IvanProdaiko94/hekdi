@@ -33,10 +33,10 @@ class Injector {
   }
 
   /**
-   * @param dependencies {Array<Object>}
+   * @param dependencies {Object<{name: string, strategy: string: value: any}>}
    * @return {Map}
    */
-  register(dependencies) {
+  register(...dependencies) {
     dependencies.map(config => {
       const inject = config.value.$inject || [];
       const dConf = this.getConfigOf(config.name);

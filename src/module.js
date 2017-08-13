@@ -18,7 +18,7 @@ class Module {
       });
     }
 
-    this.injector.register(config.declarations || []);
+    this.injector.register(...(config.declarations || []));
 
     if (config.exports) {
       const dependencies = this.injector.dependencies;

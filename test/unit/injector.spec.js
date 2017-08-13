@@ -25,10 +25,10 @@ describe('injector', () => {
 
     it('basic usage', () => {
       const injector = new Injector('MOCK');
-      injector.register([
+      injector.register(
         { name: 'D1', strategy: 'singleton', value: Dependency1 },
         { name: 'D2', strategy: 'singleton', value: Dependency2 }
-      ]);
+      );
 
       const instance = injector.resolve('D2');
       expect(instance).to.be.an.instanceOf(Dependency2);
@@ -38,9 +38,9 @@ describe('injector', () => {
 
       it('is singleton', () => {
         const injector = new Injector('MOCK');
-        injector.register([
+        injector.register(
           { name: 'D1', strategy: 'singleton', value: Dependency1 }
-        ]);
+        );
 
         const ref1 = injector.resolve('D1');
         const ref2 = injector.resolve('D1');
@@ -49,9 +49,9 @@ describe('injector', () => {
 
       it('is factory', () => {
         const injector = new Injector('MOCK');
-        injector.register([
+        injector.register(
           { name: 'D1', strategy: 'factory', value: Dependency1 }
-        ]);
+        );
 
         const ref1 = injector.resolve('D1');
         const ref2 = injector.resolve('D1');
@@ -60,9 +60,9 @@ describe('injector', () => {
 
       it('is value', () => {
         const injector = new Injector('MOCK');
-        injector.register([
+        injector.register(
           { name: 'D1', strategy: 'value', value: '123' }
-        ]);
+        );
 
         const d1 = injector.resolve('D1');
         expect(d1).to.equal('123');
@@ -70,24 +70,24 @@ describe('injector', () => {
 
       it('is constant', () => {
         const injector = new Injector('MOCK');
-        injector.register([
+        injector.register(
           { name: 'D1', strategy: 'constant', value: '123' }
-        ]);
+        );
         const d1 = injector.resolve('D1');
         expect(d1).to.equal('123');
         expect(() => {
-         injector.register([
+         injector.register(
            { name: 'D1', strategy: 'value', value: '12' }
-         ]);
+         );
         }).to.throw(Error);
       });
 
       it('is alias', () => {
         const injector = new Injector('MOCK');
-        injector.register([
+        injector.register(
           { name: 'D1', strategy: 'singleton', value: Dependency1 },
           { name: 'Alias', strategy: 'alias', value: 'D1' }
-        ]);
+        );
         const d1 = injector.resolve('Alias');
         expect(d1).to.to.be.an.instanceOf(Dependency1);
       });
@@ -95,9 +95,9 @@ describe('injector', () => {
       it('in unknown strategy', () => {
         const injector = new Injector('MOCK');
         expect(() => {
-          injector.register([
+          injector.register(
             { name: 'D1', strategy: 'blablabla', value: Dependency1 }
-          ]);
+          );
         }).to.throw(Error);
       });
     });
@@ -112,9 +112,9 @@ describe('injector', () => {
 
         const injector = new Injector('MOCK');
         expect(() => {
-          injector.register([
+          injector.register(
             { name: 'SelfDep', strategy: 'singleton', value: SelfDependentClass }
-          ]);
+          );
         }).to.throw(Error);
       });
 
@@ -133,10 +133,10 @@ describe('injector', () => {
 
         const injector = new Injector('MOCK');
         expect(() => {
-          injector.register([
+          injector.register(
             { name: 'D1', strategy: 'singleton', value: Dependency1 },
-            { name: 'D2', strategy: 'singleton', value: Dependency2 },
-          ]);
+            { name: 'D2', strategy: 'singleton', value: Dependency2 }
+          );
         }).to.throw(Error);
       });
     });
