@@ -70,12 +70,12 @@ const di = DI.create();
 di.bootstrap({
   name: 'SharedModule',
   declarations: [
-    { name: 'Ctrl', strategy: 'singleton', value: Ctrl },
-    { name: 'Controller', strategy: 'alias', value: 'Ctrl' }
+    { name: 'Controller', strategy: 'singleton', value: Ctrl },
+    { name: 'ControllerAs', strategy: 'alias', value: 'Controller' }
   ],
   imports: [ importedModule ]
 });
-const ctrl = di.resolve('Controller');
+const ctrl = di.resolve('ControllerAs');
 
 // Dependency2 { name: 'Dependency2', d1: Dependency1 { name: 'Dependency1' } } [ 1, 2, 3 ]
 ```
@@ -86,9 +86,39 @@ const ctrl = di.resolve('Controller');
 ### Top level API:
 Top level api is `DI` class that bootstraps main module and serves dependencies from it then.
 
+```javascript
+const { DI } = require('node-DI');
+const di = DI.create();
+
+di.module(moduleConfig) // creates new module from config
+
+di.bootstrap(moduleConfig) // register module as main one and resolve dependencies from it
+
+const dep = di.resolve('dependency') // return dependency that was registered to bootstrapped module according to its strategy
+```
+
 ### Modularity:
 
-DI provides developer to use
+DI provides modules as a structural unit of app.
+- `declarations` array sets own dependencies of this module.
+- `exports` array tells what dependencies are available for other modules
+- `imports` array will inject exported members from other module to this one
+
+```javascript
+const { createModule } = require('node-DI');
+
+createModule({
+  name: 'SomeModule',
+  declarations: [
+    { name: 'LocalDependency', strategy: 'singleton', value: class X {} },
+    { name: 'PublicDependency', strategy: 'factory', value: class Y {} },
+    { name: 'Arr', strategy: 'value', value: [1, 2, 3] }
+  ],
+  exports: ['PublicDependency', 'Arr'], // if '*' set, module will export all of the dependencies including imported 
+  imports: [ AnotherModuleInstance ]
+});
+// here 'LocalDependency' will be available for injection only for members of this module. 
+```
 
 ### Strategies:
 - `factory` - each time a new instance will be created.
