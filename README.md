@@ -1,3 +1,5 @@
+[![TravisCI](https://travis-ci.org/IvanProdaiko94/Injector.svg?branch=master)](https://travis-ci.org/IvanProdaiko94/Injector)
+
 # Dependency Injection
 
 This module provides dependency injection for browser and node.
