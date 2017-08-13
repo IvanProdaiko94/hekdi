@@ -3,7 +3,12 @@ const Injector = require('./injector');
 
 class Module {
   /**
-   * @param config <{name: string, [declarations]: Array<Object>, [imports]: Array<Module>, [exports]: Array<string>|string>}>
+   * @param config <{
+   *    name: string,
+   *    [declarations]: Array<Object>,
+   *    [imports]: Array<Module>,
+   *    [exports]: Array<string>|string>
+   * }>
    * @return Module <{name: string, injector: Injector, [exports]: Map}>
    */
   constructor(config) {

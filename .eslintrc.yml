@@ -70,11 +70,6 @@ rules:
   max-nested-callbacks:
     - error
     - max: 7
-  new-cap:
-    - error
-    - newIsCap: true
-      capIsNew: true
-      properties: true
   new-parens:
     - error
   no-lonely-if:
