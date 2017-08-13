@@ -1,4 +1,4 @@
-[![TravisCI](https://travis-ci.org/IvanProdaiko94/node-DI.svg?branch=master)](https://travis-ci.org/IvanProdaiko94/node-DI )
+[![Build Status](https://travis-ci.org/IvanProdaiko94/node-DI.svg?branch=master)](https://travis-ci.org/IvanProdaiko94/node-DI)
 [![bitHound Overall Score](https://www.bithound.io/github/IvanProdaiko94/node-DI/badges/score.svg)](https://www.bithound.io/github/IvanProdaiko94/node-DI)
 [![bitHound Dependencies](https://www.bithound.io/github/IvanProdaiko94/node-DI/badges/dependencies.svg)](https://www.bithound.io/github/IvanProdaiko94/node-DI/master/dependencies/npm)
 [![bitHound Code](https://www.bithound.io/github/IvanProdaiko94/node-DI/badges/code.svg)](https://www.bithound.io/github/IvanProdaiko94/node-DI)
