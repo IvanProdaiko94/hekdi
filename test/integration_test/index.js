@@ -3,9 +3,11 @@
  */
 'use strict';
 
-const app = require('../../src/app');
+const DI = require('../../src/di');
 
-app.bootstrap({
+const di = new DI();
+
+di.bootstrap({
   name: 'AppModule',
   declarations: [
     { name: 'Alias', strategy: 'alias', value: 'dependency' }
@@ -16,4 +18,4 @@ app.bootstrap({
 });
 
 //const dependency = app.resolve('Alias');
-app.main.injector.dependencies.forEach((val, key) => console.log(val, key));
+di.main.injector.dependencies.forEach((val, key) => console.log(val, key));

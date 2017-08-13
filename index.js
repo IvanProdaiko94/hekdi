@@ -3,6 +3,6 @@
 const Module = require('./src/module');
 
 module.exports = {
-  app: require('./src/app'),
+  DI: require('./src/di'),
   createModule: Module.createModule
 };

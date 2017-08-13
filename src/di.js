@@ -1,7 +1,7 @@
 'use strict';
 const Module = require('./module');
 
-class App {
+class DI {
   constructor() {
     this.main = null;
   }
@@ -22,4 +22,4 @@ class App {
   }
 }
 
-module.exports = new App();
+module.exports = DI;
