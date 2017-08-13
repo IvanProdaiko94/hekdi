@@ -1,8 +1,8 @@
 'use strict';
 
 const { expect } = require('chai');
-
 const Injector = require('../../src/injector');
+const Module = require('../../src/module');
 
 describe('injector', () => {
   describe('register dependency', () => {
@@ -139,6 +139,20 @@ describe('injector', () => {
           );
         }).to.throw(Error);
       });
+    });
+
+    it('imports dependencies from other modules', () => {
+      const module = Module.createModule({
+        name: 'AnotherModule',
+        declarations: [
+          { name: 'dependency', strategy: 'factory',  value: Dependency1 }
+        ],
+        exports: '*'
+      });
+      const injector = new Injector('MOCK');
+      injector.addImports(module.exports);
+
+      expect(injector.getConfigOf('dependency')).to.be.an('object');
     });
   });
 });

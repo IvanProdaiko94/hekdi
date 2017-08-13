@@ -3,7 +3,7 @@ const Injector = require('./injector');
 
 class Module {
   /**
-   * @param config <{name: string, [declarations]: Array<Object>, [imports]: Array<Module>}, [exports]: Map|string>
+   * @param config <{name: string, [declarations]: Array<Object>, [imports]: Array<Module>, [exports]: Array<string>|string>}>
    * @return Module <{name: string, injector: Injector, [exports]: Map}>
    */
   constructor(config) {
@@ -11,9 +11,9 @@ class Module {
     this.injector = new Injector(this.name);
 
     if (config.imports) {
-      config.imports.forEach(module => {
-        if (module.exports) {
-          this.injector.addImports(module.exports);
+      config.imports.forEach(importedModule => {
+        if (importedModule.exports) {
+          this.injector.addImports(importedModule.exports);
         }
       });
     }
