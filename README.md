@@ -2,6 +2,7 @@
 [![bitHound Overall Score](https://www.bithound.io/github/IvanProdaiko94/Injector/badges/score.svg)](https://www.bithound.io/github/IvanProdaiko94/Injector)
 [![bitHound Dependencies](https://www.bithound.io/github/IvanProdaiko94/Injector/badges/dependencies.svg)](https://www.bithound.io/github/IvanProdaiko94/Injector/master/dependencies/npm)
 [![bitHound Code](https://www.bithound.io/github/IvanProdaiko94/Injector/badges/code.svg)](https://www.bithound.io/github/IvanProdaiko94/Injector)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
 
 # Dependency Injection
 
