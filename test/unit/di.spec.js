@@ -8,4 +8,16 @@ const DI = require('../../src/di');
 
 describe('di', () => {
   const di = new DI();
+
+  it('creates module', () => {
+
+  });
+
+  it('bootstraps all modules', () => {
+
+  });
+
+  it('resolves dependency', () => {
+
+  });
 });
