@@ -1,4 +1,7 @@
-[![TravisCI](https://travis-ci.org/IvanProdaiko94/Injector.svg?branch=master)](https://travis-ci.org/IvanProdaiko94/Injector)
+[![TravisCI](https://travis-ci.org/IvanProdaiko94/Injector.svg?branch=master)](https://travis-ci.org/IvanProdaiko94/Injector )
+[![bitHound Overall Score](https://www.bithound.io/github/IvanProdaiko94/Injector/badges/score.svg)](https://www.bithound.io/github/IvanProdaiko94/Injector)
+[![bitHound Dependencies](https://www.bithound.io/github/IvanProdaiko94/Injector/badges/dependencies.svg)](https://www.bithound.io/github/IvanProdaiko94/Injector/master/dependencies/npm)
+[![bitHound Code](https://www.bithound.io/github/IvanProdaiko94/Injector/badges/code.svg)](https://www.bithound.io/github/IvanProdaiko94/Injector)
 
 # Dependency Injection
 
