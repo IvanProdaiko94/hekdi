@@ -13,7 +13,9 @@ npm i node-DI
 
 ## Usage examples:
 
-|[Express](./examples/express.js) |[Koa](./examples/koa.js) |[Hapi](./examples/hapi.js) |
+- [Express](./examples/express.js) 
+- [Koa](./examples/koa.js) 
+- [Hapi](./examples/hapi.js)
 
 ## Basic usage:
 
