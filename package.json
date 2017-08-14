@@ -11,6 +11,9 @@
   "devDependencies": {
     "chai": "^4.1.1",
     "eslint": "^3.19.0",
+    "express": "^4.15.4",
+    "hapi": "^16.5.2",
+    "koa": "^2.3.0",
     "mocha": "^3.5.0"
   },
   "repository": {
@@ -23,7 +26,14 @@
     "dependency",
     "injector",
     "injection",
-    "dependency-injection"
+    "dependency-injection",
+    "rest",
+    "koa",
+    "koa.js",
+    "express",
+    "express.js",
+    "hapi",
+    "hapi.js"
   ],
   "engines": {
     "node": ">=6.0.0"

@@ -11,7 +11,7 @@ This module provides dependency injection for node.js
 npm i node-DI
 ```
 
-## Usage examples:
+## `node-DI` popular frameworks integration:
 
 - [Express](./examples/express.js) 
 - [Koa](./examples/koa.js) 
