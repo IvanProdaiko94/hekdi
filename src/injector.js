@@ -1,6 +1,6 @@
 'use strict';
 const errors = require('./utils/errors');
-const strategies = require('./utils/stratagies');
+const strategies = require('./utils/strategies');
 
 class Injector {
   /**
