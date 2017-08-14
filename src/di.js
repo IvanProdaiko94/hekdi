@@ -24,6 +24,12 @@ class DI {
   static create() {
     return new DI();
   }
+
+  static integrateWith(app) {
+    DI.call(app);
+    Object.assign(app, DI.prototype);
+    return app;
+  }
 }
 
 module.exports = DI;
