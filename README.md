@@ -46,7 +46,7 @@ module.exports = createModule({
 ```
 
 ```javascript
-// mail.module.js
+// main.module.js
 const { createModule } = require('node-DI');
 const importedModule = require('./imported.module');
 
