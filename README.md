@@ -3,8 +3,8 @@
 [![bitHound Dependencies](https://www.bithound.io/github/IvanProdaiko94/hekdi/badges/dependencies.svg)](https://www.bithound.io/github/IvanProdaiko94/hekdi/master/dependencies/npm)
 [![bitHound Code](https://www.bithound.io/github/IvanProdaiko94/hekdi/badges/code.svg)](https://www.bithound.io/github/IvanProdaiko94/hekdi)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
-[![npm](https://img.shields.io/npm/dm/localeval.svg)](https://www.npmjs.com/package/hekdi)
-[![npm](https://img.shields.io/npm/dt/express.svg)](https://www.npmjs.com/package/hekdi)
+[![npm](https://img.shields.io/npm/dm/hekdi.svg)](https://www.npmjs.com/package/hekdi)
+[![npm](https://img.shields.io/npm/dt/hekdi.svg)](https://www.npmjs.com/package/hekdi)
 
 
 # node.js Dependency Injection
