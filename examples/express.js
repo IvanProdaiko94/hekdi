@@ -23,6 +23,12 @@ class Ctrl {
     console.log('\n');
     res.send(`${this.s1},${this.s2}`);
   }
+
+  hi(req, res, next, data) {
+    console.log('hi', data);
+    console.log('\n');
+    res.send(`${this.s1} there`);
+  }
 }
 
 const servicesModule = createModule({
@@ -35,6 +41,13 @@ const servicesModule = createModule({
 });
 
 const di = expressDI.create(app, {
+  '/api': {
+    'get': {
+      controller: 'Controller',
+      fn: 'hi',
+      data: ['args']
+    }
+  },
   '/api/:test': {
     'get': {
       controller: 'Controller',
@@ -49,7 +62,7 @@ const di = expressDI.create(app, {
         }
       ],
       data: ['args']
-    }
+    },
   }
 });
 

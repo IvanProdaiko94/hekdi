@@ -20,6 +20,9 @@ function ExpressDI(app, config) {
         });
         app.use(key, ...fns);
       }
+      if (!routeConfig.data) {
+        routeConfig.data = [];
+      }
       app[method](
         key,
         (...args) => this.resolve(routeConfig.controller)[routeConfig.fn](...args, ...routeConfig.data)
