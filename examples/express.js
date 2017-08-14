@@ -1,9 +1,7 @@
 'use strict';
 
 const express = require('express');
-const { DI } = require('..');
-
-const di = DI.create();
+const { expressDI, createModule } = require('..');
 const app = express();
 
 class Ctrl {
@@ -15,13 +13,19 @@ class Ctrl {
     this.s2 = s2;
   }
 
+  next(req, res, next) {
+    console.log('hi from middleware');
+    next();
+  }
+
   greet(req, res) {
+    console.log('greet');
+    console.log('\n');
     res.send(`${this.s1},${this.s2}`);
   }
 }
 
-
-const servicesModule = di.module({
+const servicesModule = createModule({
   name: 'ServicesModule',
   declarations: [
     { name: 'hello', strategy: 'value', value: 'Hello' },
@@ -30,24 +34,31 @@ const servicesModule = di.module({
   exports: '*'
 });
 
+const di = expressDI.create(app, {
+  '/api/:test': {
+    'get': {
+      controller: 'Controller',
+      fn: 'greet',
+      middlewares: [
+        (req, res, next) => {
+          console.log('from middleware');
+          next();
+        }, {
+          controller: 'Controller',
+          fn: 'next'
+        }
+      ],
+      data: ['args']
+    }
+  }
+});
+
 di.bootstrap({
   name: 'Module',
   declarations: [
     { name: 'Controller', strategy: 'singleton', value: Ctrl }
   ],
   imports: [ servicesModule ]
-});
-
-const pathToCtrl = {
-  '/': {
-    ctrl: 'Controller',
-    method: 'greet'
-  }
-};
-
-app.get('/', (req, res) => {
-  const config = pathToCtrl[req.path];
-  di.resolve(config.ctrl)[config.method](req, res);
 });
 
 app.listen(3000);
