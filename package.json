@@ -1,5 +1,5 @@
 {
-  "name": "node-DI",
+  "name": "hekdi",
   "version": "1.0.0",
   "description": "Depedency injection framework for node.js",
   "main": "index.js",

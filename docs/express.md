@@ -1,11 +1,11 @@
 ## Express usage:
 
-`node-DI` can be integrated with [express.js](https://github.com/expressjs/express).
+`hekdi` can be integrated with [express.js](https://github.com/expressjs/express).
 ```javascript
 'use strict';
 
 const express = require('express');
-const { expressDI, createModule } = require('node-DI');
+const { expressDI, createModule } = require('hekdi');
 const app = express(); // create express app
 
 class Ctrl { // create controller

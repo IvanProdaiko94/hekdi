@@ -1,17 +1,17 @@
-[![Build Status](https://travis-ci.org/IvanProdaiko94/node-DI.svg?branch=master)](https://travis-ci.org/IvanProdaiko94/node-DI)
-[![bitHound Overall Score](https://www.bithound.io/github/IvanProdaiko94/node-DI/badges/score.svg)](https://www.bithound.io/github/IvanProdaiko94/node-DI)
-[![bitHound Dependencies](https://www.bithound.io/github/IvanProdaiko94/node-DI/badges/dependencies.svg)](https://www.bithound.io/github/IvanProdaiko94/node-DI/master/dependencies/npm)
-[![bitHound Code](https://www.bithound.io/github/IvanProdaiko94/node-DI/badges/code.svg)](https://www.bithound.io/github/IvanProdaiko94/node-DI)
+[![Build Status](https://travis-ci.org/IvanProdaiko94/hekdi.svg?branch=master)](https://travis-ci.org/IvanProdaiko94/hekdi)
+[![bitHound Overall Score](https://www.bithound.io/github/IvanProdaiko94/hekdi/badges/score.svg)](https://www.bithound.io/github/IvanProdaiko94/hekdi)
+[![bitHound Dependencies](https://www.bithound.io/github/IvanProdaiko94/hekdi/badges/dependencies.svg)](https://www.bithound.io/github/IvanProdaiko94/hekdi/master/dependencies/npm)
+[![bitHound Code](https://www.bithound.io/github/IvanProdaiko94/hekdi/badges/code.svg)](https://www.bithound.io/github/IvanProdaiko94/hekdi)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)]()
 
 # node.js Dependency Injection
 This module provides dependency injection for node.js
 
 ```bash
-npm i node-DI
+npm i hekdi
 ```
 
-## `node-DI` popular frameworks integration:
+## `hekdi` popular frameworks integration:
 
 - [Express](./docs/express.md) 
 - [Koa](./examples/koa.js) 
@@ -21,7 +21,7 @@ npm i node-DI
 
 ```javascript
 // imported.module.js
-const { createModule } = require('node-DI');
+const { createModule } = require('hekdi');
 
 class Dependency1 {
   constructor() {
@@ -53,7 +53,7 @@ module.exports = createModule({
 
 ```javascript
 // main.module.js
-const { createModule } = require('node-DI');
+const { createModule } = require('hekdi');
 const importedModule = require('./imported.module');
 
 class Ctrl {
@@ -78,7 +78,7 @@ module.exports = createModule({
 
 ```javascript
 // app.js
-const { DI } = require('node-DI');
+const { DI } = require('hekdi');
 const MainModule = require('./main.module');
 const di = DI.create();
 
@@ -94,7 +94,7 @@ const ctrl = di.resolve('ControllerAs');
 Top level api is `DI` class that bootstraps main module and serves dependencies from it then.
 
 ```javascript
-const { DI } = require('node-DI');
+const { DI } = require('hekdi');
 const di = DI.create();
 
 di.module(moduleConfig) // creates new module from config
@@ -112,7 +112,7 @@ DI provides modules as a structural unit of app.
 - `imports` array will inject exported members from other module to this one
 
 ```javascript
-const { createModule } = require('node-DI');
+const { createModule } = require('hekdi');
 
 createModule({
   name: 'SomeModule',
