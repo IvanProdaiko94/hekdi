@@ -11,6 +11,10 @@ This module provides dependency injection for node.js
 npm i node-DI
 ```
 
+## Usage examples:
+
+|[Express](./examples/express.js) |[Koa](./examples/koa.js) |[Hapi](./examples/hapi.js) |
+
 ## Basic usage:
 
 ```javascript
