@@ -6,6 +6,12 @@
 
 const DI = require('../di');
 
+/**
+ *
+ * @param app
+ * @param config Object
+ * @constructor
+ */
 function ExpressDI(app, config) {
   DI.call(this);
 

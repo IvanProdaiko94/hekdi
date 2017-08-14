@@ -13,7 +13,7 @@ npm i node-DI
 
 ## `node-DI` popular frameworks integration:
 
-- [Express](./examples/express.js) 
+- [Express](./docs/express.md) 
 - [Koa](./examples/koa.js) 
 - [Hapi](./examples/hapi.js)
 
