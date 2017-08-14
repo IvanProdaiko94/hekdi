@@ -14,7 +14,9 @@ npm i node-DI
 ## Basic usage:
 
 ```javascript
-// dependencies.js
+// imported.module.js
+const { createModule } = require('node-DI');
+
 class Dependency1 {
   constructor() {
     this.name = 'Dependency1';
@@ -32,22 +34,6 @@ class Dependency2 {
   }
 }
 
-class Ctrl {
-  static get $inject() {
-    return ['PublicDependency', 'Arr'];
-  }
-
-  constructor(publicDep, arr) {
-    console.log(publicDep, arr);
-  }
-}
-module.exports = { Dependency1, Dependency2, Ctrl };
-```
-
-```javascript
-// imported_module.js
-const { createModule } = require('node-DI');
-const { Dependency1, Dependency2 } = require('./dependencies');
 module.exports = createModule({
   name: 'ImportedModule',
   declarations: [
@@ -60,28 +46,43 @@ module.exports = createModule({
 ```
 
 ```javascript
-// app.js
+// mail.module.js
+const { createModule } = require('node-DI');
+const importedModule = require('./imported.module');
 
-const { DI } = require('node-DI');
-const importedModule = require('./imported_module');
-const { Ctrl } = require('./dependncies');
-const di = DI.create();
+class Ctrl {
+  static get $inject() {
+    return ['PublicDependency', 'Arr'];
+  }
 
-di.bootstrap({
+  constructor(publicDep, arr) {
+    console.log(publicDep, arr);
+  }
+}
+
+module.exports = createModule({
   name: 'SharedModule',
   declarations: [
     { name: 'Controller', strategy: 'singleton', value: Ctrl },
     { name: 'ControllerAs', strategy: 'alias', value: 'Controller' }
   ],
   imports: [ importedModule ]
-});
-const ctrl = di.resolve('ControllerAs');
+})
+```
 
+```javascript
+// app.js
+const { DI } = require('node-DI');
+const MainModule = require('./main.module');
+const di = DI.create();
+
+di.bootstrap(MainModule);
+
+const ctrl = di.resolve('ControllerAs');
 // Dependency2 { name: 'Dependency2', d1: Dependency1 { name: 'Dependency1' } } [ 1, 2, 3 ]
 ```
 
 ## Main concepts:
-
 
 ### Top level API:
 Top level api is `DI` class that bootstraps main module and serves dependencies from it then.
