@@ -83,13 +83,15 @@ app.listen(3000); // launch app
 ```
 
 In the case of `get` request to `/api` we will get:
-- console: 'hi' 'args'
-- response: 'hello there'
+- console:
+`'hi' 'args'`
+- response:
+`'hello there'`
 
 In the case of `get` request to `/api/param` we will get:
 - console: 
-    - 'from middleware';
-    - 'hi from next Ctrl method';
-    - 'greet'
+    `'from middleware'`
+    `'hi from next Ctrl method'`
+    `'greet'`
     
-- response: 'Hello, World'
+- response: `'Hello, World'`
