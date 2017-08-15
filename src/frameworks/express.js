@@ -19,11 +19,11 @@ function ExpressDI(app, config) {
     for (const method in config[key]) {
       const routeConfig = config[key][method];
       if (routeConfig.middlewares && routeConfig.middlewares.length) {
-        const fns = routeConfig.middlewares.map(middleware => {
-          return typeof middleware === 'function' ?
+        const fns = routeConfig.middlewares.map(
+          middleware => (middleware === 'function' ?
             middleware :
-            (...args) => this.resolve(middleware.controller)[middleware.fn](...args);
-        });
+            (...args) => this.resolve(middleware.controller)[middleware.fn](...args))
+        );
         app.use(key, ...fns);
       }
       if (!routeConfig.data) {

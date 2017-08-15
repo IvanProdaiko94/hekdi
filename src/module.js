@@ -42,7 +42,7 @@ function Module(config) {
   }
 }
 
-Module.createModule = function (config) {
+Module.createModule = function(config) {
   return new Module(config);
 };
 
