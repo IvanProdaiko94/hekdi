@@ -227,7 +227,7 @@ describe('KoaDI', () => {
       req.end();
     });
 
-    xit('handle get request with di ctrl function', done => {
+    it('handle get request with di ctrl function', done => {
       const req = http.get({
         port: 3004,
         path: '/'
