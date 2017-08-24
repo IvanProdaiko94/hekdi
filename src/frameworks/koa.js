@@ -22,20 +22,20 @@ module.exports = function koaDi(app, bootstrapModule, router) {
    * @returns {Function}
    */
   const diResolver = function(ctx, original) {
-    /** @param ctx {Function|String|Array<String>} */
+    /** @param ctx {Function|String|Object<{controller: string, action: string, [params]: Array}>} */
     return function(diConfig) {
       switch (typeof diConfig) {
         case 'string':
           original.call(ctx, app.context.di.resolve(diConfig));
           break;
         case 'object': // array
-          const [ctrl, method, ...args] = diConfig;
-          const dependency = app.context.di.resolve(ctrl);
-          original.call(ctx, async(ctx, next) => {
+          const { controller, action, params } = diConfig;
+          const dependency = app.context.di.resolve(controller);
+          original.call(ctx, async (ctx, next) => {
             if (next) {
-              await dependency[method](ctx, next, ...args);
+              await dependency[action](ctx, next, params);
             } else {
-              await dependency[method](ctx, ...args);
+              await dependency[action](ctx, params);
             }
           });
           break;
