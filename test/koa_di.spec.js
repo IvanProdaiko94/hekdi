@@ -202,11 +202,11 @@ describe('KoaDI', () => {
       .use(router.routes())
       .use(router.allowedMethods());
 
-    app.listen(3003);
+    app.listen(3004);
 
     it('handle post http request with echo function', done => {
       const req = http.request({
-        port: 3003,
+        port: 3004,
         method: 'POST',
         headers: {
           'Content-Type': 'text/plain'
@@ -229,7 +229,7 @@ describe('KoaDI', () => {
 
     xit('handle get request with di ctrl function', done => {
       const req = http.get({
-        port: 3003,
+        port: 3004,
         path: '/'
       }, res => {
         let body = '';
@@ -247,7 +247,7 @@ describe('KoaDI', () => {
 
     it('handle get request with plain fn', done => {
       const req = http.get({
-        port: 3003,
+        port: 3004,
         path: '/test'
       }, res => {
         let body = '';
