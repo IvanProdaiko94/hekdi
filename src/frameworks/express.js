@@ -21,9 +21,9 @@ function ExpressDI(app, config) {
       if (routeConfig.middlewares && routeConfig.middlewares.length) {
         const fns = routeConfig.middlewares.map(
           middleware => (middleware === 'function' ?
-            middleware :
-            (...args) => this.resolve(middleware.controller)[middleware.fn](...args))
-        );
+          middleware :
+          (...args) => this.resolve(middleware.controller)[middleware.fn](...args))
+      );
         app.use(key, ...fns);
       }
       if (!routeConfig.data) {
@@ -32,7 +32,7 @@ function ExpressDI(app, config) {
       app[method](
         key,
         (...args) => this.resolve(routeConfig.controller)[routeConfig.fn](...args, ...routeConfig.data)
-      );
+    );
     }
   }
 }
