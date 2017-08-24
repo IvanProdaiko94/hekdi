@@ -1,6 +1,7 @@
 'use strict';
 const { expect } = require('chai');
 const Koa = require('koa');
+const koaRouter = require('koa-router');
 const bodyParser = require('koa-body-parser');
 const { createModule } = require('../src/module');
 const DI = require('../src/di');
@@ -47,7 +48,7 @@ describe('KoaDI', () => {
     exports: ['ctrl']
   };
 
-  describe('respond correctly', () => {
+  describe('DI should work with framework', () => {
     it('call getHandler from `ctrl` dependency', done => {
       const app = new Koa();
       koaDI(app, moduleToBootstrap);
@@ -129,10 +130,10 @@ describe('KoaDI', () => {
 
       app.use('handler');
 
-      app.listen(3002);
+      app.listen(3003);
 
       const req = http.get({
-        port: 3002
+        port: 3003
       }, res => {
         let body = '';
         res.setEncoding('utf8');
@@ -177,9 +178,90 @@ describe('KoaDI', () => {
       koaDI(app, moduleToBootstrap);
       expect(app.context.di).to.be.instanceOf(DI)
     });
+  });
 
-    describe('use router', () => {
+  describe('use router', () => {
+    const app = new Koa();
+    const router = new koaRouter();
+    koaDI(app, moduleToBootstrap, router);
 
+    app.use(bodyParser());
+
+    router.post(['/', '/test'], {
+      controller: 'ctrl',
+      action: 'echo'
+    }).get('/', {
+      controller: 'ctrl',
+      action: 'getHandler',
+      params: [1, 2, 3]
+    }).get('/test', async (ctx) => {
+      ctx.body = 'handled';
     });
+
+    app
+      .use(router.routes())
+      .use(router.allowedMethods());
+
+    app.listen(3002);
+
+    it('handle post http request with echo function', done => {
+      const req = http.request({
+        port: 3002,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain'
+        }
+      }, res => {
+        let body = '';
+        res.setEncoding('utf8');
+        res.on('data', d => body += d.toString());
+        res.on('end', () => {
+          expect(body).to.equal('HEY!!!!! DOES ANYBODY HERE ME SCREAMING?!');
+          done();
+        });
+      });
+      req.on('error', err => {
+        throw err;
+      });
+      req.write('HEY!!!!! DOES ANYBODY HERE ME SCREAMING?!');
+      req.end();
+    });
+
+    it('handle get request with di ctrl function', done => {
+      const req = http.get({
+        port: 3002,
+        path: '/'
+      }, res => {
+        let body = '';
+        res.setEncoding('utf8');
+        res.on('data', d => body += d.toString());
+        res.on('end', () => {
+          expect(body).to.equal('Greet from Ctrl [1,2,3]');
+          done();
+        });
+      });
+      req.on('error', err => {
+        throw err;
+      });
+    });
+
+    it('handle get request with plain fn', done => {
+      const req = http.get({
+        port: 3002,
+        path: '/test'
+      }, res => {
+        let body = '';
+        res.setEncoding('utf8');
+        res.on('data', d => body += d.toString());
+        res.on('end', () => {
+          expect(body).to.equal('handled');
+          done();
+        });
+      });
+      req.on('error', err => {
+        throw err;
+      });
+    });
+
   });
 });
