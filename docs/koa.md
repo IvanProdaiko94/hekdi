@@ -29,7 +29,7 @@ const moduleToBootstrap = {
 
 koaDI(moduleToBootstrap, app);
 // now di is already bootstrapped and ready to work. 
-// In koa app you can right di as `app.context.di`
+// In koa app you can reach di as `app.context.di`
 // In di you can get koa app as `App` dependency.
 app.use({
   controller: 'ctrl', // if dependency is object
