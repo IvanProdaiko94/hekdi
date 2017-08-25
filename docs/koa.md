@@ -1,4 +1,4 @@
-## Express usage:
+# Koa.js usage:
 
 `hekdi` can be integrated with [koa.js](https://github.com/koajs/koa).
 
