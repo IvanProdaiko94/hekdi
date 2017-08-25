@@ -7,7 +7,7 @@ that are responsible for requests handling.
 
 While using koa hakdi monkey patches `use` method.
 
-####Basic usage:
+#### Basic usage:
 ```javascript
 const Koa = require('koa');
 const koaDI = require('hakdi');
@@ -46,7 +46,7 @@ app.use(async (ctx) => { // you still can pass function to `use` method
 });
 ```
 
-###Usage with router
+### Usage with router
 While using router the story is almost the same:
 ```javascript
 'use strict';
