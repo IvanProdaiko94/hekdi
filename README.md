@@ -17,8 +17,8 @@ npm i hekdi
 ## `hekdi` popular frameworks integration:
 
 - [Express](./docs/express.md) 
-- [Koa](./examples/koa.js) 
-- [Hapi](./examples/hapi.js)
+- [Koa](./examples/koa.md) 
+- [Hapi](./examples/hapi.md)
 
 ## Basic usage:
 

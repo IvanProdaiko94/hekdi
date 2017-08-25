@@ -1,7 +1,7 @@
 'use strict';
 const { expect } = require('chai');
 const Koa = require('koa');
-const koaRouter = require('koa-router');
+const Router = require('koa-router');
 const bodyParser = require('koa-body-parser');
 const { createModule } = require('../src/module');
 const DI = require('../src/di');
@@ -12,12 +12,13 @@ describe('KoaDI', () => {
 
   class Ctrl {
     static get $inject() {
-      return ['greet', 'from'];
+      return ['greet', 'from', 'App'];
     }
 
-    constructor(greet, from) {
+    constructor(greet, from, app) {
       this.greet = greet;
       this.from = from;
+      this.app = app;
       this.name = 'Ctrl';
     }
 
@@ -51,7 +52,7 @@ describe('KoaDI', () => {
   describe('DI should work with framework', () => {
     it('call getHandler from `ctrl` dependency', done => {
       const app = new Koa();
-      koaDI(app, moduleToBootstrap);
+      koaDI(moduleToBootstrap, app);
 
       app.use({
         controller: 'ctrl',
@@ -79,7 +80,7 @@ describe('KoaDI', () => {
 
     it('handle post http request with echo function', done => {
       const app = new Koa();
-      koaDI(app, moduleToBootstrap);
+      koaDI(moduleToBootstrap, app);
 
       app.use(bodyParser());
 
@@ -114,7 +115,7 @@ describe('KoaDI', () => {
 
     it('get function as handler', done => {
       const app = new Koa();
-      koaDI(app, {
+      koaDI({
         name: 'MainModule',
         declarations: [
           { name: 'handler',
@@ -126,7 +127,7 @@ describe('KoaDI', () => {
         ],
         imports: [ testModule ],
         exports: ['handler']
-      });
+      }, app);
 
       app.use('handler');
 
@@ -175,15 +176,21 @@ describe('KoaDI', () => {
 
     it('get DI from koa context', () => {
       const app = new Koa();
-      koaDI(app, moduleToBootstrap);
+      koaDI(moduleToBootstrap, app);
       expect(app.context.di).to.be.instanceOf(DI)
+    });
+
+    it('has dependency "App" that is koa app', () => {
+      const app = new Koa();
+      koaDI(moduleToBootstrap, app);
+      expect(app.context.di.resolve('App')).to.deep.equal(app);
     });
   });
 
   describe('use router', () => {
     const app = new Koa();
-    const router = new koaRouter();
-    koaDI(app, moduleToBootstrap, router);
+    const router = new Router();
+    koaDI(moduleToBootstrap, app, router);
 
     app.use(bodyParser());
 

@@ -76,9 +76,12 @@ const diRouterResolver = function(app, ctx, original) {
  * @param bootstrapModule {Module|Object}
  * @param [router]
  */
-module.exports = function koaDi(app, bootstrapModule, router) {
-  app.context.di = new DI();
-  app.context.di.bootstrap(bootstrapModule);
+module.exports = function koaDi(bootstrapModule, app, router) {
+  const di = new DI();
+  di.bootstrap(bootstrapModule);
+  di.main.injector.register({name: 'App', strategy: 'constant', value: app});
+  app.context.di = di;
+
   app.use = diResolver(app, app.use);
 
   if (router) {

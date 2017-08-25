@@ -3,3 +3,5 @@
  */
 
 'use strict';
+
+const DI = require('../di');

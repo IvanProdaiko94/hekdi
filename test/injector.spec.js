@@ -92,7 +92,7 @@ describe('injector', () => {
         expect(d1).to.to.be.an.instanceOf(Dependency1);
       });
 
-      it('in unknown strategy', () => {
+      it('is unknown strategy', () => {
         const injector = new Injector('MOCK');
         expect(() => {
           injector.register(
