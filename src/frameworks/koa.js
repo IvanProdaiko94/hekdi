@@ -18,10 +18,10 @@ const diResolver = function(ctx, original) {
       case 'string':
         original.call(ctx, ctx.context.di.resolve(diConfig));
         break;
-      case 'object': // array
+      case 'object':
         const { controller, action, params } = diConfig;
-        const dependency = ctx.context.di.resolve(controller);
         original.call(ctx, async (ctx, next) => {
+          const dependency = ctx.context.di.resolve(controller);
           if (next) {
             await dependency[action](ctx, next, params);
           } else {
@@ -52,10 +52,10 @@ const diRouterResolver = function(app, ctx, original) {
       case 'string':
         original.call(ctx, path, app.context.di.resolve(diConfig));
         break;
-      case 'object': // array
+      case 'object':
         const { controller, action, params } = diConfig;
-        const dependency = app.context.di.resolve(controller);
         original.call(ctx, path, async (ctx, next) => {
+          const dependency = app.context.di.resolve(controller);
           if (next) {
             await dependency[action](ctx, next, params);
           } else {
