@@ -7,21 +7,21 @@
 const DI = require('../di');
 
 /**
- * @param ctx {Object}
+ * @param app {Object}
  * @param original {Function}
  * @returns {Function}
  */
-const diResolver = function(ctx, original) {
+const diResolver = function(app, original) {
   /** @param diConfig {Function|String|Object<{controller: string, action: string, [params]: Array}>} */
   return function(diConfig) {
     switch (typeof diConfig) {
       case 'string':
-        original.call(ctx, ctx.context.di.resolve(diConfig));
+        original.call(app, app.context.di.resolve(diConfig));
         break;
       case 'object':
         const { controller, action, params } = diConfig;
-        original.call(ctx, async (ctx, next) => {
-          const dependency = ctx.context.di.resolve(controller);
+        original.call(app, async (ctx, next) => {
+          const dependency = app.context.di.resolve(controller);
           if (next) {
             await dependency[action](ctx, next, params);
           } else {
@@ -30,9 +30,9 @@ const diResolver = function(ctx, original) {
         });
         break;
       default: // function
-        original.call(ctx, diConfig);
+        original.call(app, diConfig);
     }
-    return ctx;
+    return app;
   };
 };
 
