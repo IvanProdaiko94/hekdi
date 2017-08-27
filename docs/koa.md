@@ -77,7 +77,7 @@ koaDI(moduleToBootstrap, app, router);
 app.use(bodyParser());
 
 router
-  .post(['/', '/test'], 'echo')
+  .post(['/', '/test'], { action: 'echo'})
   .get('/', {
     controller: 'ctrl',
     action: 'getHandler',
