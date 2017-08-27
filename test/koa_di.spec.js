@@ -243,7 +243,7 @@ describe('KoaDI', () => {
       koaDI(moduleToBootstrap, app);
 
       expect(() => {
-       app.use({ params: '123' });
+        app.use({ params: '123' });
       }).to.throw(Error);
 
     })
