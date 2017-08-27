@@ -19,7 +19,7 @@ const diResolver = function(app, original) {
       if (!controller && !action) {
         throw new Error('Incorrect dependency config provided!');
       }
-      original.call(app, async (ctx, next) => {
+      original.call(app, async(ctx, next) => {
         let dependency;
         if (!controller && action) {
           dependency = app.context.di.resolve(action);
@@ -56,7 +56,7 @@ const diRouterResolver = function(app, router, original) {
         if (!controller && !action) {
           throw new Error('Incorrect dependency config provided!');
         }
-        return async (ctx, next) => {
+        return async(ctx, next) => {
           let dependency;
           if (!controller && action) {
             dependency = app.context.di.resolve(action);
@@ -65,7 +65,7 @@ const diRouterResolver = function(app, router, original) {
             dependency = app.context.di.resolve(controller);
             await dependency[action](ctx, next, params);
           }
-        }
+        };
       }
       return config;
     });
@@ -88,7 +88,7 @@ const diRouterResolver = function(app, router, original) {
 module.exports = function koaDi(bootstrapModule, app, router) {
   const di = new DI();
   di.bootstrap(bootstrapModule);
-  di.main.injector.register({name: 'App', strategy: 'constant', value: app});
+  di.main.injector.register({ name: 'App', strategy: 'constant', value: app });
   app.context.di = di;
 
   app.use = diResolver(app, app.use);
@@ -98,6 +98,6 @@ module.exports = function koaDi(bootstrapModule, app, router) {
     router.methods.forEach(method => {
       const methodName = method.toLowerCase();
       router[methodName] = diRouterResolver(app, router, router[methodName]);
-    })
+    });
   }
 };

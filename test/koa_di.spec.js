@@ -119,7 +119,7 @@ describe('KoaDI', () => {
         declarations: [
           { name: 'handler',
             strategy: 'value',
-            value: async (ctx) => {
+            value: async ctx => {
               ctx.body = 'handled';
             }
           }
@@ -151,7 +151,7 @@ describe('KoaDI', () => {
     it('uses plain function without di', done => {
       const app = new Koa();
 
-      app.use(async (ctx) => {
+      app.use(async ctx => {
         ctx.body = 'handled';
       });
 
@@ -229,7 +229,7 @@ describe('KoaDI', () => {
     it('get DI from koa context', () => {
       const app = new Koa();
       koaDI(moduleToBootstrap, app);
-      expect(app.context.di).to.be.instanceOf(DI)
+      expect(app.context.di).to.be.instanceOf(DI);
     });
 
     it('has dependency "App" that is koa app', () => {
@@ -245,8 +245,7 @@ describe('KoaDI', () => {
       expect(() => {
         app.use({ params: '123' });
       }).to.throw(Error);
-
-    })
+    });
   });
 
   describe('use router', () => {
@@ -257,7 +256,7 @@ describe('KoaDI', () => {
     app.use(bodyParser());
 
     router.post('named', '/named',
-      async (ctx, next) => {
+      async(ctx, next) => {
         await next();
         ctx.body = ctx.body += ' named';
       },
@@ -272,7 +271,7 @@ describe('KoaDI', () => {
       controller: 'ctrl',
       action: 'getHandler',
       params: [1, 2, 3]
-    }).get('/test', async (ctx) => {
+    }).get('/test', async(ctx) => {
       ctx.body = 'handled';
     });
 
@@ -283,7 +282,7 @@ describe('KoaDI', () => {
     app.listen(3005);
 
     it('created named route', () => {
-      expect(router.url('named', 1)).to.equal('/named')
+      expect(router.url('named', 1)).to.equal('/named');
     });
 
     it('pass through two middlewares of named route', done => {
