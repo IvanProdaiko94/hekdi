@@ -45,8 +45,7 @@ describe('KoaDI', () => {
     declarations: [
       { name: 'ctrl', strategy: 'singleton', value: Ctrl }
     ],
-    imports: [ testModule ],
-    exports: ['ctrl']
+    imports: [ testModule ]
   };
 
   describe('DI should work with framework', () => {
@@ -129,7 +128,7 @@ describe('KoaDI', () => {
         exports: ['handler']
       }, app);
 
-      app.use('handler');
+      app.use({ action: 'handler' });
 
       app.listen(3003);
 
@@ -149,7 +148,7 @@ describe('KoaDI', () => {
       });
     });
 
-    it('uses plain function without di', () => {
+    it('uses plain function without di', done => {
       const app = new Koa();
 
       app.use(async (ctx) => {
@@ -174,6 +173,59 @@ describe('KoaDI', () => {
       });
     });
 
+    it('create new instance for each request got', done => {
+      const app = new Koa();
+
+      class Factory {
+        constructor() {
+          this.random = Math.random();
+        }
+
+        async getRandomNumber(ctx) {
+          ctx.body = this.random;
+        }
+      }
+
+      koaDI({
+        name: 'MainModule',
+        declarations: [
+          { name: 'ctrl', strategy: 'factory', value: Factory }
+        ]
+      }, app);
+
+      app.use({
+        controller: 'ctrl',
+        action: 'getRandomNumber'
+      });
+
+      app.listen(3004);
+
+      const results = [];
+
+      const request = () => {
+        const req = http.get({
+          port: 3004
+        }, res => {
+          let body = '';
+          res.setEncoding('utf8');
+          res.on('data', d => body += d.toString());
+          res.on('end', () => {
+            results.push(body);
+            if (results.length === 2) {
+              expect(results[0]).not.equal(results[1]);
+              done();
+            }
+          });
+        });
+        req.on('error', err => {
+          throw err;
+        });
+      };
+
+      request();
+      request();
+    });
+
     it('get DI from koa context', () => {
       const app = new Koa();
       koaDI(moduleToBootstrap, app);
@@ -185,6 +237,16 @@ describe('KoaDI', () => {
       koaDI(moduleToBootstrap, app);
       expect(app.context.di.resolve('App')).to.deep.equal(app);
     });
+
+    it('throw error if not correct config provided', () => {
+      const app = new Koa();
+      koaDI(moduleToBootstrap, app);
+
+      expect(() => {
+       app.use({ params: '123' });
+      }).to.throw(Error);
+
+    })
   });
 
   describe('use router', () => {
@@ -194,7 +256,16 @@ describe('KoaDI', () => {
 
     app.use(bodyParser());
 
-    router.post(['/', '/test'], {
+    router.post('named', '/named',
+      async (ctx, next) => {
+        await next();
+        ctx.body = ctx.body += ' named';
+      },
+      {
+        controller: 'ctrl',
+        action: 'echo'
+      }
+    ).post(['/', '/test'], {
       controller: 'ctrl',
       action: 'echo'
     }).get('/', {
@@ -209,11 +280,39 @@ describe('KoaDI', () => {
       .use(router.routes())
       .use(router.allowedMethods());
 
-    app.listen(3004);
+    app.listen(3005);
+
+    it('created named route', () => {
+      expect(router.url('named', 1)).to.equal('/named')
+    });
+
+    it('pass through two middlewares of named route', done => {
+      const req = http.request({
+        port: 3005,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        path: '/named'
+      }, res => {
+        let body = '';
+        res.setEncoding('utf8');
+        res.on('data', d => body += d.toString());
+        res.on('end', () => {
+          expect(body).to.equal('HEY!!!!! DOES ANYBODY HERE ME SCREAMING?! named');
+          done();
+        });
+      });
+      req.on('error', err => {
+        throw err;
+      });
+      req.write('HEY!!!!! DOES ANYBODY HERE ME SCREAMING?!');
+      req.end();
+    });
 
     it('handle post http request with echo function', done => {
       const req = http.request({
-        port: 3004,
+        port: 3005,
         method: 'POST',
         headers: {
           'Content-Type': 'text/plain'
@@ -236,7 +335,7 @@ describe('KoaDI', () => {
 
     it('handle get request with di ctrl function', done => {
       const req = http.get({
-        port: 3004,
+        port: 3005,
         path: '/'
       }, res => {
         let body = '';
@@ -254,7 +353,7 @@ describe('KoaDI', () => {
 
     it('handle get request with plain fn', done => {
       const req = http.get({
-        port: 3004,
+        port: 3005,
         path: '/test'
       }, res => {
         let body = '';

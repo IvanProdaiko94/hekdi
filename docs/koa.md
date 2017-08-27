@@ -37,8 +37,8 @@ app.use({
   params: [1, 2, 3] // also you can pass additional params to call if needed
 });
 
-app.use('echo'); 
-// you can reach some function without class creation by passing as string
+app.use({ action: 'echo' }); 
+// you can reach some function without class creation by passing only action
 // to `use` method
 
 app.use(async (ctx) => { // you still can pass function to `use` method
@@ -48,7 +48,7 @@ app.use(async (ctx) => { // you still can pass function to `use` method
 
 ### Usage with router
 While using router the story is almost the same:
-```javascript
+```javascript 
 'use strict';
 
 const Koa = require('koa');

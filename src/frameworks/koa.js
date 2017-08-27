@@ -7,30 +7,30 @@
 const DI = require('../di');
 
 /**
- * @param app {Object}
+ * @param app {Koa.application}
  * @param original {Function}
  * @returns {Function}
  */
 const diResolver = function(app, original) {
-  /** @param diConfig {Function|String|Object<{controller: string, action: string, [params]: Array}>} */
+  /** @param diConfig {Function|String|Object<{[controller]: string, action: string, [params]: Array}>} */
   return function(diConfig) {
-    switch (typeof diConfig) {
-      case 'string':
-        original.call(app, app.context.di.resolve(diConfig));
-        break;
-      case 'object':
-        const { controller, action, params } = diConfig;
-        original.call(app, async (ctx, next) => {
-          const dependency = app.context.di.resolve(controller);
-          if (next) {
-            await dependency[action](ctx, next, params);
-          } else {
-            await dependency[action](ctx, params);
-          }
-        });
-        break;
-      default: // function
-        original.call(app, diConfig);
+    if (typeof diConfig === 'object') {
+      const { controller, action, params } = diConfig;
+      if (!controller && !action) {
+        throw new Error('Incorrect dependency config provided!');
+      }
+      original.call(app, async (ctx, next) => {
+        let dependency;
+        if (!controller && action) {
+          dependency = app.context.di.resolve(action);
+          await dependency(ctx, next, params);
+        } else {
+          dependency = app.context.di.resolve(controller);
+          await dependency[action](ctx, next, params);
+        }
+      });
+    } else {
+      original.call(app, diConfig);
     }
     return app;
   };
@@ -38,35 +38,44 @@ const diResolver = function(app, original) {
 
 /**
  * @param app {Object}
- * @param ctx {Object}
+ * @param router {Router}
  * @param original {Function}
  * @returns {Function}
  */
-const diRouterResolver = function(app, ctx, original) {
+const diRouterResolver = function(app, router, original) {
   /**
    * path {string}
    * @param diConfig {Function|String|Object<{controller: string, action: string, [params]: Array}>}
    */
-  return function(path, diConfig) {
-    switch (typeof diConfig) {
-      case 'string':
-        original.call(ctx, path, app.context.di.resolve(diConfig));
-        break;
-      case 'object':
-        const { controller, action, params } = diConfig;
-        original.call(ctx, path, async (ctx, next) => {
-          const dependency = app.context.di.resolve(controller);
-          if (next) {
-            await dependency[action](ctx, next, params);
+  return function(...args) {
+    const [name, path] = args;
+    const isRouteNamed = typeof name === 'string' && (typeof path === 'string' || path instanceof RegExp);
+    const middlewares = args.slice(isRouteNamed ? 2 : 1).map(config => {
+      if (typeof config === 'object') {
+        const { controller, action, params } = config;
+        if (!controller && !action) {
+          throw new Error('Incorrect dependency config provided!');
+        }
+        return async (ctx, next) => {
+          let dependency;
+          if (!controller && action) {
+            dependency = app.context.di.resolve(action);
+            await dependency(ctx, next, params);
           } else {
-            await dependency[action](ctx, params);
+            dependency = app.context.di.resolve(controller);
+            await dependency[action](ctx, next, params);
           }
-        });
-        break;
-      default: // function
-        original.call(ctx, path, diConfig);
+        }
+      }
+      return config;
+    });
+
+    if (isRouteNamed) {
+      original.call(router, name, path, ...middlewares);
+    } else {
+      original.call(router, name, ...middlewares);
     }
-    return ctx;
+    return router;
   };
 };
 
