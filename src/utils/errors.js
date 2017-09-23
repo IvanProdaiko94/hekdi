@@ -7,5 +7,6 @@ module.exports = {
   circularDependency: (main, dep) => `Circular dependency found in '${dep}' while registering '${main}'`,
   incorrectResolutionStrategy: (strategy, strategies) => (
     `strategy ${strategy} is incorrect. Allowable values are ${Object.keys(strategies).join(', ')}`
-  )
+  ),
+  providerDoNotRegisterProviders: providerName => `Providers may not register providers ${providerName}`
 };

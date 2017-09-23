@@ -122,7 +122,8 @@ createModule({
   declarations: [
     { name: 'LocalDependency', strategy: 'singleton', value: class X {} },
     { name: 'PublicDependency', strategy: 'factory', value: class Y {} },
-    { name: 'Arr', strategy: 'value', value: [1, 2, 3] }
+    { name: 'Arr', strategy: 'value', value: [1, 2, 3] },
+    { name: 'ZProvider', strategy: 'provider', value: () => ({ name: 'Z', strategy: 'factory', value: class Z {} })}
   ],
   exports: ['PublicDependency', 'Arr'], // if '*' set, module will export all of the dependencies including imported 
   imports: [ AnotherModuleInstance ]
@@ -136,3 +137,5 @@ createModule({
 - `value` - just will be returned.
 - `constant` - the same as `value` but can't be reassign.
 - `alias` - used to create an alias for some dependency.
+- `provider` - function that will be called, to get dependency config. 
+Providers register dependencies before others do. Providers can't be exported from module.
