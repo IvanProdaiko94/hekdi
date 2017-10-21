@@ -127,66 +127,6 @@ describe('injector', () => {
       });
     });
 
-    describe('self|circular dependency', () => {
-
-      it('not accept self dependency', () => {
-        class A {
-          static get $inject() {
-            return ['A'];
-          }
-        }
-        injector.register(
-          { name: 'A', strategy: 'singleton', value: A },
-        );
-        expect(() => injector.resolve('A')).to.throw(Error);
-      });
-
-      it('not accept simple circular dependency', () => {
-        class A {
-          static get $inject() {
-            return ['B'];
-          }
-        }
-
-        class B {
-          static get $inject() {
-            return ['A'];
-          }
-        }
-        injector.register(
-          { name: 'A', strategy: 'singleton', value: A },
-          { name: 'B', strategy: 'singleton', value: B },
-        );
-        expect(() => injector.resolve('A')).to.throw(Error);
-      });
-
-      it('not accept complex circular dependency', () => {
-        class A {
-          static get $inject() {
-            return ['B'];
-          }
-        }
-
-        class B {
-          static get $inject() {
-            return ['C'];
-          }
-        }
-
-        class C {
-          static get $inject() {
-            return ['A'];
-          }
-        }
-        injector.register(
-          { name: 'A', strategy: 'singleton', value: A },
-          { name: 'B', strategy: 'singleton', value: B },
-          { name: 'C', strategy: 'singleton', value: C }
-        );
-        expect(() => injector.resolve('A')).to.throw(Error);
-      });
-    });
-
     it('imports dependencies from other modules', () => {
       const module = Module.createModule({
         name: 'AnotherModule',
@@ -197,6 +137,99 @@ describe('injector', () => {
       });
       injector.addImports(module.exports);
       expect(injector.getConfigOf('dependency')).to.be.an('object');
+    });
+  });
+
+  describe('self|circular dependency', () => {
+
+    it('not accept self dependency', () => {
+      class A {
+        static get $inject() {
+          return ['A'];
+        }
+      }
+      injector.register(
+        { name: 'A', strategy: 'singleton', value: A },
+      );
+      expect(() => injector.resolve('A')).to.throw(Error, /A: A -> A/);
+    });
+
+    it('not accept simple circular dependency', () => {
+      class A {
+        static get $inject() {
+          return ['B'];
+        }
+      }
+
+      class B {
+        static get $inject() {
+          return ['A'];
+        }
+      }
+      injector.register(
+        { name: 'A', strategy: 'singleton', value: A },
+        { name: 'B', strategy: 'singleton', value: B },
+      );
+      expect(() => injector.resolve('A')).to.throw(Error, /A: A -> B -> A/);
+    });
+
+    it('not accept complex circular dependency', () => {
+      class A {
+        static get $inject() {
+          return ['B'];
+        }
+      }
+
+      class B {
+        static get $inject() {
+          return ['C'];
+        }
+      }
+
+      class C {
+        static get $inject() {
+          return ['A'];
+        }
+      }
+      injector.register(
+        { name: 'A', strategy: 'singleton', value: A },
+        { name: 'B', strategy: 'singleton', value: B },
+        { name: 'C', strategy: 'singleton', value: C }
+      );
+      expect(() => injector.resolve('A')).to.throw(Error, /A: A -> B -> C -> A/);
+    });
+
+    it('create correct error for process', () => {
+      class A {
+        static get $inject() {
+          return ['B'];
+        }
+      }
+
+      class B {
+        static get $inject() {
+          return ['D', 'C'];
+        }
+      }
+
+      class C {
+        static get $inject() {
+          return ['A'];
+        }
+      }
+
+      class D {
+        static get $inject() {
+          return [];
+        }
+      }
+      injector.register(
+        { name: 'A', strategy: 'singleton', value: A },
+        { name: 'B', strategy: 'singleton', value: B },
+        { name: 'C', strategy: 'singleton', value: C },
+        { name: 'D', strategy: 'singleton', value: D }
+      );
+      expect(() => injector.resolve('A')).to.throw(Error, /A: A -> B -> C -> A/);
     });
   });
 });

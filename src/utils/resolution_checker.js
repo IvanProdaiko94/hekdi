@@ -6,19 +6,20 @@
 
 const { circularDependency } = require('./errors');
 
-const resolutionChecker = function(set = null, name) {
+const resolutionChecker = function(arr = null, name, index = 0) {
   const toInject = this.getConfigOf(name).value.$inject;
-  if (set && set.has(name)) {
-    throw new Error(circularDependency(Array.from(set).join(' -> '), name));
+  if (arr && arr.indexOf(name) !== -1) {
+    arr.push(name);
+    throw new Error(circularDependency(arr.join(' -> '), name));
   }
-  set = set || new Set([name]);
-  set.add(name);
+  arr = arr || [];
+  index ? arr.splice(index, 1, name) : arr.push(name);
   if (toInject && toInject.length) {
     toInject.forEach(name => {
-      resolutionChecker.call(this, set, name);
+      resolutionChecker.call(this, arr, name, index + 1);
     });
   }
-  return set;
+  return arr;
 };
 
 module.exports = resolutionChecker;
