@@ -5,6 +5,10 @@ const Injector = require('../src/injector');
 const Module = require('../src/module');
 
 describe('injector', () => {
+  let injector;
+  beforeEach(() => {
+    injector = new Injector('MOCK');
+  });
   describe('register dependency', () => {
     class Dependency1 {
       constructor() {
@@ -24,7 +28,6 @@ describe('injector', () => {
     }
 
     it('basic usage', () => {
-      const injector = new Injector('MOCK');
       injector.register(
         { name: 'D1', strategy: 'singleton', value: Dependency1 },
         { name: 'D2', strategy: 'singleton', value: Dependency2 }
@@ -37,7 +40,6 @@ describe('injector', () => {
     describe('strategies test', () => {
 
       it('is singleton', () => {
-        const injector = new Injector('MOCK');
         injector.register(
           { name: 'D1', strategy: 'singleton', value: Dependency1 }
         );
@@ -48,7 +50,6 @@ describe('injector', () => {
       });
 
       it('is factory', () => {
-        const injector = new Injector('MOCK');
         injector.register(
           { name: 'D1', strategy: 'factory', value: Dependency1 }
         );
@@ -59,7 +60,6 @@ describe('injector', () => {
       });
 
       it('is value', () => {
-        const injector = new Injector('MOCK');
         injector.register(
           { name: 'D1', strategy: 'value', value: '123' }
         );
@@ -69,7 +69,6 @@ describe('injector', () => {
       });
 
       it('is constant', () => {
-        const injector = new Injector('MOCK');
         injector.register(
           { name: 'D1', strategy: 'constant', value: '123' }
         );
@@ -83,7 +82,6 @@ describe('injector', () => {
       });
 
       it('is alias', () => {
-        const injector = new Injector('MOCK');
         injector.register(
           { name: 'D1', strategy: 'singleton', value: Dependency1 },
           { name: 'Alias', strategy: 'alias', value: 'D1' }
@@ -94,8 +92,7 @@ describe('injector', () => {
 
       describe('provider', () => {
         it('register provider', () => {
-          const injector = new Injector('MOCK');
-          class Y {}
+          class Y { }
           class X {
             static get $inject() {
               return ['Y'];
@@ -115,7 +112,6 @@ describe('injector', () => {
           expect(injector.resolve('Y')).to.be.an.instanceOf(Y);
         });
         it('throws an error if provider returns provider', () => {
-          const injector = new Injector('MOCK');
           expect(() => {
             injector.register(
               { name: 'X', strategy: 'provider', value: () => ({ strategy: 'provider', value: 'V' }) },
@@ -125,51 +121,69 @@ describe('injector', () => {
       });
 
       it('is unknown strategy', () => {
-        const injector = new Injector('MOCK');
         expect(() => {
-          injector.register(
-            { name: 'D1', strategy: 'blablabla', value: Dependency1 }
-          );
+          injector.register({ name: 'D1', strategy: 'blablabla', value: Dependency1 });
         }).to.throw(Error);
       });
     });
 
     describe('self|circular dependency', () => {
+
       it('not accept self dependency', () => {
-        class SelfDependentClass {
+        class A {
           static get $inject() {
-            return ['SelfDep'];
+            return ['A'];
           }
         }
-
-        const injector = new Injector('MOCK');
-        expect(() => {
-          injector.register(
-            { name: 'SelfDep', strategy: 'singleton', value: SelfDependentClass }
-          );
-        }).to.throw(Error);
+        injector.register(
+          { name: 'A', strategy: 'singleton', value: A },
+        );
+        expect(() => injector.resolve('A')).to.throw(Error);
       });
 
-      it('not accept circular dependency', () => {
-        class Dependency1 {
+      it('not accept simple circular dependency', () => {
+        class A {
           static get $inject() {
-            return ['D2'];
+            return ['B'];
           }
         }
 
-        class Dependency2 {
+        class B {
           static get $inject() {
-            return ['D1'];
+            return ['A'];
+          }
+        }
+        injector.register(
+          { name: 'A', strategy: 'singleton', value: A },
+          { name: 'B', strategy: 'singleton', value: B },
+        );
+        expect(() => injector.resolve('A')).to.throw(Error);
+      });
+
+      it('not accept complex circular dependency', () => {
+        class A {
+          static get $inject() {
+            return ['B'];
           }
         }
 
-        const injector = new Injector('MOCK');
-        expect(() => {
-          injector.register(
-            { name: 'D1', strategy: 'singleton', value: Dependency1 },
-            { name: 'D2', strategy: 'singleton', value: Dependency2 }
-          );
-        }).to.throw(Error);
+        class B {
+          static get $inject() {
+            return ['C'];
+          }
+        }
+
+        class C {
+          static get $inject() {
+            return ['A'];
+          }
+        }
+        injector.register(
+          { name: 'A', strategy: 'singleton', value: A },
+          { name: 'B', strategy: 'singleton', value: B },
+          { name: 'C', strategy: 'singleton', value: C }
+        );
+        expect(() => injector.resolve('A')).to.throw(Error);
       });
     });
 
@@ -181,9 +195,7 @@ describe('injector', () => {
         ],
         exports: '*'
       });
-      const injector = new Injector('MOCK');
       injector.addImports(module.exports);
-
       expect(injector.getConfigOf('dependency')).to.be.an('object');
     });
   });

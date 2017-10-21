@@ -3,9 +3,18 @@
  */
 'use strict';
 
-const inject = function(dependencyName) {
+const errors = require('./errors');
+
+const resolveHelper = function(dependencyName) {
+  if (this.dependencies.has(dependencyName)) {
+    return this.dependencies.get(dependencyName).resolver();
+  }
+  throw new ReferenceError(errors.unmetDependency(this.belongTo, dependencyName));
+};
+
+const resolveDependency = function(dependencyName) {
   const config = this.getConfigOf(dependencyName);
-  return new config.value(...(config.value.$inject || []).map(name => this.resolve(name)));
+  return new config.value(...(config.value.$inject || []).map(name => resolveHelper.call(this, name)));
 };
 
 module.exports = {
@@ -14,7 +23,7 @@ module.exports = {
    * @param dependencyName {string}
    */
   factory: dependencyName => function() {
-    return inject.call(this, dependencyName);
+    return resolveDependency.call(this, dependencyName);
   },
   /**
    * return the same instance of constructor each time
@@ -24,7 +33,7 @@ module.exports = {
     let instance;
     return function() {
       if (!instance) {
-        instance = inject.call(this, dependencyName);
+        instance = resolveDependency.call(this, dependencyName);
       }
       return instance;
     };
@@ -50,6 +59,6 @@ module.exports = {
   alias: dependencyName => function() {
     const { value } = this.getConfigOf(dependencyName);
     const { name } = this.getConfigOf(value);
-    return this.resolve(name);
+    return resolveHelper.call(this, name);
   }
 };

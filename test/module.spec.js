@@ -55,7 +55,7 @@ describe('Module', () => {
     });
 
     it('does not export providers', () => {
-      class Z {};
+      class Z { }
       const module = Module.createModule({
         name: 'SharedModule',
         declarations: [

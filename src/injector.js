@@ -1,6 +1,7 @@
 'use strict';
 const errors = require('./utils/errors');
 const strategies = require('./utils/strategies');
+const resolutionChecker = require('./utils/resolution_checker');
 
 /**
  *
@@ -17,7 +18,7 @@ function Injector(moduleName) {
  * @return {*}
  */
 Injector.prototype.resolve = function(dependencyName) {
-  if (this.dependencies.has(dependencyName)) {
+  if (this.dependencies.has(dependencyName) && resolutionChecker.call(this, null, dependencyName)) {
     return this.dependencies.get(dependencyName).resolver();
   }
   throw new ReferenceError(errors.unmetDependency(this.belongTo, dependencyName));
@@ -59,23 +60,12 @@ Injector.prototype.register = function(...dependencies) {
   }
 
   dependencies.forEach(config => {
-    const inject = config.value.$inject || [];
     const dConf = this.getConfigOf(config.name);
     if (dConf && dConf.strategy === 'constant') {
       throw new Error(errors.dependencyIsRegistered(config.name));
     } else if (!strategies.hasOwnProperty(config.strategy)) {
       throw new Error(errors.incorrectResolutionStrategy(config.strategy, strategies));
-    } else if (inject.indexOf(config.name) !== -1) {
-      throw new Error(errors.selfDependency(config.name));
     }
-    inject.forEach(dep => {
-      if (this.dependencies.has(dep)) {
-        const depsToCheck = this.getConfigOf(dep).value.$inject || [];
-        if (depsToCheck.indexOf(config.name) !== -1) {
-          throw new Error(errors.circularDependency(config.name, dep));
-        }
-      }
-    });
     config.resolver = strategies[config.strategy](config.name).bind(this);
     config.belongTo = this.belongTo;
     this.dependencies.set(config.name, config);
