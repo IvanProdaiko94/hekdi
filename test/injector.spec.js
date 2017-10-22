@@ -149,7 +149,7 @@ describe('injector', () => {
         }
       }
       injector.register(
-        { name: 'A', strategy: 'singleton', value: A },
+        { name: 'A', strategy: 'singleton', value: A }
       );
       expect(() => injector.resolve('A')).to.throw(Error, /A: A -> A/);
     });
@@ -168,7 +168,7 @@ describe('injector', () => {
       }
       injector.register(
         { name: 'A', strategy: 'singleton', value: A },
-        { name: 'B', strategy: 'singleton', value: B },
+        { name: 'B', strategy: 'singleton', value: B }
       );
       expect(() => injector.resolve('A')).to.throw(Error, /A: A -> B -> A/);
     });
