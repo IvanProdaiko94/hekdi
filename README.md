@@ -14,7 +14,7 @@ This module provides dependency injection for node.js
 npm i hekdi
 ```
 
-![App Example](./draw.png)
+![App Example](assets/draw.png)
 
 ## `hekdi` popular frameworks integration:
 

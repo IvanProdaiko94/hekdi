@@ -2,7 +2,7 @@
 /node_modules
 /.idea
 /test
-/draw.png
+/assets
 .eslintrc.yml
 .travis.yml
 .gitignore
