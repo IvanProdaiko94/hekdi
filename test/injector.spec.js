@@ -114,7 +114,7 @@ describe('injector', () => {
         it('throws an error if provider returns provider', () => {
           expect(() => {
             injector.register(
-              { name: 'X', strategy: 'provider', value: () => ({ strategy: 'provider', value: 'V' }) },
+              { name: 'X', strategy: 'provider', value: () => ({ strategy: 'provider', value: 'V' }) }
             );
           }).to.throw(Error);
         });
