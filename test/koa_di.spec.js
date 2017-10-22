@@ -9,7 +9,7 @@ const koaDI = require('../src/frameworks/koa');
 
 // do not run async/await containing tests if node version os less than 7.6
 const nodeV = process.versions.node.split('.').map(Number);
-if (nodeV[0] > 7 && nodeV[1] > 6) {
+if (nodeV[0] > 7) {
   describe('KoaDI', () => {
     const http = require('http');
 
