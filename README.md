@@ -8,7 +8,8 @@
 
 
 # node.js Dependency Injection
-This module provides dependency injection for node.js
+
+### Scale your node.js app with ease.
 
 ```bash
 npm i hekdi
