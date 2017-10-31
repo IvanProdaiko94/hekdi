@@ -10,7 +10,7 @@ While using koa hakdi monkey patches `use` method.
 #### Basic usage:
 ```javascript
 const Koa = require('koa');
-const koaDI = require('hakdi');
+const koaDI = require('hekdi');
 const app = new Koa();
 
 const moduleToBootstrap = {
