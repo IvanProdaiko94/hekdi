@@ -54,8 +54,9 @@ While using router the story is almost the same:
 'use strict';
 
 const Koa = require('koa');
-const { koaDI } = require('hekdi');
+const Router = require('koa-router');
 const bodyParser = require('koa-body-parser');
+const { koaDI } = require('hekdi');
 
 const app = new Koa();
 const router = new Router();
