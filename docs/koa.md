@@ -10,7 +10,7 @@ While using koa hakdi monkey patches `use` method.
 #### Basic usage:
 ```javascript
 const Koa = require('koa');
-const koaDI = require('hekdi');
+const { koaDI } = require('hekdi');
 const app = new Koa();
 
 const moduleToBootstrap = {
@@ -44,6 +44,8 @@ app.use({ action: 'echo' });
 app.use(async (ctx) => { // you still can pass function to `use` method
   ctx.body = ctx.request.body;
 });
+
+app.listen(3000)
 ```
 
 ### Usage with router
@@ -52,7 +54,7 @@ While using router the story is almost the same:
 'use strict';
 
 const Koa = require('koa');
-const koaDI = require('hakdi');
+const { koaDI } = require('hekdi');
 const bodyParser = require('koa-body-parser');
 
 const app = new Koa();
@@ -90,5 +92,5 @@ router
     .use(router.routes())
     .use(router.allowedMethods());
 
-  app.listen(3004);
+  app.listen(3000);
 ```
