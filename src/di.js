@@ -6,10 +6,7 @@ function DI() {
 }
 
 DI.prototype.module = function(moduleConfig) {
-  if (!(moduleConfig instanceof Module)) {
-    return Module.createModule(moduleConfig);
-  }
-  return moduleConfig;
+  return moduleConfig instanceof Module ? moduleConfig : Module.createModule(moduleConfig);
 };
 
 DI.prototype.bootstrap = function(moduleConfig) {

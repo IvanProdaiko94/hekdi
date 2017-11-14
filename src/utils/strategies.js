@@ -9,7 +9,7 @@ const resolveHelper = function(dependencyName) {
   if (this.dependencies.has(dependencyName)) {
     return this.dependencies.get(dependencyName).resolver();
   }
-  throw new ReferenceError(errors.unmetDependency(this.belongTo, dependencyName));
+  throw new ReferenceError(errors.unmetDependency(this.belongTo.name, dependencyName));
 };
 
 const resolveDependency = function(dependencyName) {

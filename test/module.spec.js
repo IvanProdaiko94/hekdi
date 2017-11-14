@@ -28,7 +28,7 @@ describe('Module', () => {
     it('has own injector', () => {
       const module = Module.createModule(moduleConfig);
       expect(module.injector).to.be.an.instanceOf(Injector);
-      expect(module.injector.belongTo).to.be.equal('testModule');
+      expect(module.injector.belongTo.name).to.be.equal('testModule');
     });
 
     it('exports dependencies', () => {

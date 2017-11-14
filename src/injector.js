@@ -5,11 +5,11 @@ const resolutionChecker = require('./utils/resolution_checker');
 
 /**
  *
- * @param moduleName {string}
+ * @param module {Module}
  * @constructor
  */
-function Injector(moduleName) {
-  this.belongTo = moduleName;
+function Injector(module) {
+  this.belongTo = module;
   this.dependencies = new Map();
 }
 
@@ -21,7 +21,7 @@ Injector.prototype.resolve = function(dependencyName) {
   if (this.dependencies.has(dependencyName) && resolutionChecker.call(this, null, dependencyName)) {
     return this.dependencies.get(dependencyName).resolver();
   }
-  throw new ReferenceError(errors.unmetDependency(this.belongTo, dependencyName));
+  throw new ReferenceError(errors.unmetDependency(this.belongTo.name, dependencyName));
 };
 
 /**

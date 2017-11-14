@@ -14,7 +14,7 @@ const Injector = require('./injector');
  */
 function Module(config) {
   this.name = config.name;
-  this.injector = new Injector(this.name);
+  this.injector = new Injector(this);
 
   if (config.imports) {
     config.imports.forEach(importedModule => {
@@ -34,7 +34,7 @@ function Module(config) {
       this.exports = new Map();
       config.exports.forEach(dependencyName => {
         const dependencyConfig = this.injector.getConfigOf(dependencyName);
-        if (dependencyConfig.belongTo === this.name) {
+        if (dependencyConfig.belongTo.name === this.name) {
           this.exports.set(dependencyName, dependencyConfig);
         }
       });
