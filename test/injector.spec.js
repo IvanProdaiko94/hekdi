@@ -5,11 +5,12 @@ const Injector = require('../src/injector');
 const Module = require('../src/module');
 
 describe('injector', () => {
-  let injector;
-  beforeEach(() => {
-    injector = new Injector('MOCK');
-  });
   describe('register dependency', () => {
+    let injector;
+    beforeEach(() => {
+      injector = new Injector('MOCK');
+    });
+
     class Dependency1 {
       constructor() {
         this.name = 'Dependency1';
@@ -143,93 +144,117 @@ describe('injector', () => {
   describe('self|circular dependency', () => {
 
     it('not accept self dependency', () => {
-      class A {
-        static get $inject() {
-          return ['A'];
-        }
-      }
-      injector.register(
-        { name: 'A', strategy: 'singleton', value: A }
-      );
-      expect(() => injector.resolve('A')).to.throw(Error, /A: A -> A/);
+      const main = Module.createModule({
+        name: 'MainModule',
+        declarations: [
+          { name: 'A', strategy: 'singleton', value: class A { static get $inject() { return ['A']; } } }
+        ],
+        exports: '*'
+      });
+      expect(() => main.injector.resolve('A')).to.throw(Error, /MainModule: A -> A/);
     });
 
     it('not accept simple circular dependency', () => {
-      class A {
-        static get $inject() {
-          return ['B'];
-        }
-      }
-
-      class B {
-        static get $inject() {
-          return ['A'];
-        }
-      }
-      injector.register(
-        { name: 'A', strategy: 'singleton', value: A },
-        { name: 'B', strategy: 'singleton', value: B }
-      );
-      expect(() => injector.resolve('A')).to.throw(Error, /A: A -> B -> A/);
+      const main = Module.createModule({
+        name: 'MainModule',
+        declarations: [
+          { name: 'A', strategy: 'singleton', value: class A { static get $inject() { return ['B']; } } },
+          { name: 'B', strategy: 'singleton', value: class B { static get $inject() { return ['A']; } } }
+        ],
+        exports: '*'
+      });
+      expect(() => main.injector.resolve('A')).to.throw(Error, /MainModule: A -> B -> A/);
     });
 
     it('not accept complex circular dependency', () => {
-      class A {
-        static get $inject() {
-          return ['B'];
-        }
-      }
-
-      class B {
-        static get $inject() {
-          return ['C'];
-        }
-      }
-
-      class C {
-        static get $inject() {
-          return ['A'];
-        }
-      }
-      injector.register(
-        { name: 'A', strategy: 'singleton', value: A },
-        { name: 'B', strategy: 'singleton', value: B },
-        { name: 'C', strategy: 'singleton', value: C }
-      );
-      expect(() => injector.resolve('A')).to.throw(Error, /A: A -> B -> C -> A/);
+      const main = Module.createModule({
+        name: 'MainModule',
+        declarations: [
+          { name: 'A', strategy: 'singleton', value: class A { static get $inject() { return ['B']; } } },
+          { name: 'B', strategy: 'singleton', value: class B { static get $inject() { return ['C']; } } },
+          { name: 'C', strategy: 'singleton', value: class C { static get $inject() { return ['A']; } } }
+        ],
+        exports: '*'
+      });
+      expect(() => main.injector.resolve('A')).to.throw(Error, /MainModule: A -> B -> C -> A/);
     });
 
     it('create correct error for process', () => {
-      class A {
-        static get $inject() {
-          return ['B'];
-        }
-      }
+      const main = Module.createModule({
+        name: 'MainModule',
+        declarations: [
+          { name: 'A', strategy: 'singleton', value: class A { static get $inject() { return ['B']; } } },
+          { name: 'B', strategy: 'singleton', value: class B { static get $inject() { return ['D', 'C']; } } },
+          { name: 'C', strategy: 'singleton', value: class C { static get $inject() { return ['A']; } } },
+          { name: 'D', strategy: 'singleton', value: class D { static get $inject() { return []; } } }
+        ],
+        exports: '*'
+      });
+      expect(() => main.injector.resolve('A')).to.throw(Error, /A -> B -> C -> A/);
+    });
 
-      class B {
-        static get $inject() {
-          return ['D', 'C'];
-        }
-      }
+    it('create correct error while resolving circular dependencies in different modules', () => {
+      const toBeImported = Module.createModule({
+        name: 'XModule',
+        declarations: [
+          { name: 'C', strategy: 'factory',  value: class C { static get $inject() { return ['D']; } } },
+          { name: 'D', strategy: 'factory',  value: class D { static get $inject() { return ['E']; } } },
+          { name: 'E', strategy: 'factory',  value: class E { static get $inject() { return ['F']; } } },
+          { name: 'F', strategy: 'factory',  value: class F { static get $inject() { return ['C']; } } },
+        ],
+        exports: ['C', 'D']
+      });
 
-      class C {
-        static get $inject() {
-          return ['A'];
-        }
-      }
+      const main = Module.createModule({
+        name: 'YModule',
+        declarations: [
+          { name: 'A', strategy: 'factory',  value: class A { static get $inject() { return ['B']; } } },
+          { name: 'B', strategy: 'factory',  value: class B { static get $inject() { return ['C', 'D']; } } }
+        ],
+        imports: [ toBeImported ],
+        exports: '*'
+      });
 
-      class D {
-        static get $inject() {
-          return [];
-        }
-      }
-      injector.register(
-        { name: 'A', strategy: 'singleton', value: A },
-        { name: 'B', strategy: 'singleton', value: B },
-        { name: 'C', strategy: 'singleton', value: C },
-        { name: 'D', strategy: 'singleton', value: D }
-      );
-      expect(() => injector.resolve('A')).to.throw(Error, /A: A -> B -> C -> A/);
+      expect(() => main.injector.resolve('A')).to.throw(Error, /XModule: C -> D -> E -> F -> C/);
+    });
+
+
+    it('circular dependency through several modules', () => {
+      const x = Module.createModule({
+        name: 'Module X',
+        declarations: [
+          { name: 'G', strategy: 'factory',  value: class C { static get $inject() { return ['OK', 'Good', 'H']; } } },
+          { name: 'H', strategy: 'factory',  value: class D { static get $inject() { return ['I']; } } },
+          { name: 'I', strategy: 'factory',  value: class E { static get $inject() { return ['J']; } } },
+          { name: 'J', strategy: 'factory',  value: class F { static get $inject() { return ['G']; } } },
+          { name: 'OK', strategy: 'constant', value: 123 },
+          { name: 'Good', strategy: 'singleton', value: class Good { } },
+        ],
+        exports: ['G']
+      });
+
+      const y = Module.createModule({
+        name: 'Module Y',
+        declarations: [
+          { name: 'C', strategy: 'factory',  value: class C { static get $inject() { return ['D']; } } },
+          { name: 'D', strategy: 'factory',  value: class D { static get $inject() { return ['E']; } } },
+          { name: 'E', strategy: 'factory',  value: class E { static get $inject() { return ['F']; } } },
+          { name: 'F', strategy: 'factory',  value: class F { static get $inject() { return ['G']; } } }
+        ],
+        imports: [ x ],
+        exports: ['C', 'D']
+      });
+
+      const z = Module.createModule({
+        name: 'Module Z',
+        declarations: [
+          { name: 'A', strategy: 'factory',  value: class A { static get $inject() { return ['B']; } } },
+          { name: 'B', strategy: 'factory',  value: class B { static get $inject() { return ['C', 'D']; } } }
+        ],
+        imports: [ y ],
+        exports: '*'
+      });
+      expect(() => z.injector.resolve('A')).to.throw(Error, /Module X: G -> H -> I -> J -> G/);
     });
   });
 });

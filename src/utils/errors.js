@@ -3,7 +3,7 @@
 module.exports = {
   dependencyIsRegistered: dependencyName => `${dependencyName} is registered already. Constant can not be reassigned`,
   unmetDependency: (moduleName, dependencyName) => `Unmet dependency '${dependencyName}' in module '${moduleName}'`,
-  circularDependency: (dep, list) => `Circular dependency found while resolving ${dep}: ${list}`,
+  circularDependency: (moduleName, dependencyName, message) => `Circular dependency found in module '${moduleName}' while resolving ${dependencyName}! ${message.moduleName}: ${message.resolutionTrace.join(' -> ')}`,
   incorrectResolutionStrategy: (strategy, strategies) => (
     `strategy ${strategy} is incorrect. Allowable values are ${Object.keys(strategies).join(', ')}`
   ),

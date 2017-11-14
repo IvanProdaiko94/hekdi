@@ -1,7 +1,6 @@
 'use strict';
 const errors = require('./utils/errors');
 const strategies = require('./utils/strategies');
-const resolutionChecker = require('./utils/resolution_checker');
 
 /**
  *
@@ -11,6 +10,7 @@ const resolutionChecker = require('./utils/resolution_checker');
 function Injector(module) {
   this.belongTo = module;
   this.dependencies = new Map();
+  this.resolutionTrace = [];
 }
 
 /**
@@ -18,8 +18,14 @@ function Injector(module) {
  * @return {*}
  */
 Injector.prototype.resolve = function(dependencyName) {
-  if (this.dependencies.has(dependencyName) && resolutionChecker.call(this, null, dependencyName)) {
-    return this.dependencies.get(dependencyName).resolver();
+  if (this.dependencies.has(dependencyName)) {
+    try {
+      const dependency = this.getConfigOf(dependencyName).resolver();
+      this.resolutionTrace = [];
+      return dependency;
+    } catch (message) {
+      throw new Error(errors.circularDependency(this.belongTo.name, dependencyName, message));
+    }
   }
   throw new ReferenceError(errors.unmetDependency(this.belongTo.name, dependencyName));
 };
@@ -29,6 +35,10 @@ Injector.prototype.resolve = function(dependencyName) {
  */
 Injector.prototype.addImports = function(dependencies) {
   dependencies.forEach((dependencyConfig, key) => {
+    if (this.dependencies.has(key)) {
+      console.warn(`Name collision happened while adding imports. ${key} is already exists in ${this.belongTo.name}`);
+      return;
+    }
     this.dependencies.set(key, dependencyConfig);
   });
 };

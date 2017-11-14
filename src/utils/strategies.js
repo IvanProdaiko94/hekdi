@@ -7,14 +7,24 @@ const errors = require('./errors');
 
 const resolveHelper = function(dependencyName) {
   if (this.dependencies.has(dependencyName)) {
-    return this.dependencies.get(dependencyName).resolver();
+    return this.getConfigOf(dependencyName).resolver();
   }
   throw new ReferenceError(errors.unmetDependency(this.belongTo.name, dependencyName));
 };
 
 const resolveDependency = function(dependencyName) {
   const config = this.getConfigOf(dependencyName);
-  return new config.value(...(config.value.$inject || []).map(name => resolveHelper.call(this, name)));
+  if (this.resolutionTrace.indexOf(dependencyName) !== -1) {
+    this.resolutionTrace.push(dependencyName);
+    throw {
+      moduleName: this.belongTo.name,
+      resolutionTrace: this.resolutionTrace
+    };
+  }
+  this.resolutionTrace.push(dependencyName);
+  const d = new config.value(...(config.value.$inject || []).map(name => resolveHelper.call(this, name)));
+  this.resolutionTrace.pop();
+  return d;
 };
 
 module.exports = {
