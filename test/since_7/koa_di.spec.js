@@ -175,7 +175,7 @@ describe('KoaDI', () => {
     it('create new instance for each request got', done => {
       const app = new Koa();
 
-      class Factory {
+      class Service {
         constructor() {
           this.random = Math.random();
         }
@@ -188,7 +188,7 @@ describe('KoaDI', () => {
       koaDI({
         name: 'MainModule',
         declarations: [
-          { name: 'ctrl', strategy: 'factory', value: Factory }
+          { name: 'ctrl', strategy: 'service', value: Service }
         ]
       }, app);
 

@@ -8,7 +8,7 @@ const { spawn } = require('child_process');
 
 const nodeVersion = process.versions.node.split('.').map(Number);
 
-const files = nodeVersion[0] > 6 ? './**/*.spec.js' : './test/*.spec.js';
+const files = nodeVersion[0] > 6 ? './test/**/*.spec.js' : './test/*.spec.js';
 
 const child = spawn('mocha', [files]);
 

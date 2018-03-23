@@ -44,7 +44,7 @@ module.exports = createModule({
   name: 'ImportedModule',
   declarations: [
     { name: 'LocalDependency', strategy: 'singleton', value: Dependency1 },
-    { name: 'PublicDependency', strategy: 'factory', value: Dependency2 },
+    { name: 'PublicDependency', strategy: 'service', value: Dependency2 },
     { name: 'Arr', strategy: 'value', value: [1, 2, 3] }
   ],
   exports: ['PublicDependency', 'Arr']
@@ -118,9 +118,9 @@ createModule({
   name: 'SomeModule',
   declarations: [
     { name: 'LocalDependency', strategy: 'singleton', value: class X {} },
-    { name: 'PublicDependency', strategy: 'factory', value: class Y {} },
+    { name: 'PublicDependency', strategy: 'service', value: class Y {} },
     { name: 'Arr', strategy: 'value', value: [1, 2, 3] },
-    { name: 'ZProvider', strategy: 'provider', value: () => ({ name: 'Z', strategy: 'factory', value: class Z {} })}
+    { name: 'ZProvider', strategy: 'provider', value: () => ({ name: 'Z', strategy: 'service', value: class Z {} })}
   ],
   exports: ['PublicDependency', 'Arr'], // if '*' set, module will export all of the dependencies including imported 
   imports: [ AnotherModuleInstance ]
@@ -129,7 +129,8 @@ createModule({
 ```
 
 ### Strategies:
-- `factory` - each time a new instance will be created.
+- `service` - each time a new instance will be created with `new` keyword.
+- `factory` - return the result of plain function call.
 - `singleton` - only one instance will be created.
 - `value` - just will be returned.
 - `constant` - the same as `value` but can't be reassign.

@@ -12,7 +12,7 @@ const resolveHelper = function(dependencyName) {
   throw new ReferenceError(errors.unmetDependency(this.belongTo.name, dependencyName));
 };
 
-const resolveDependency = function(dependencyName) {
+const resolveDependency = function(dependencyName, strategy) {
   const config = this.getConfigOf(dependencyName);
   if (this.resolutionTrace.indexOf(dependencyName) !== -1) {
     this.resolutionTrace.push(dependencyName);
@@ -22,18 +22,28 @@ const resolveDependency = function(dependencyName) {
     };
   }
   this.resolutionTrace.push(dependencyName);
-  const d = new config.value(...(config.value.$inject || []).map(name => resolveHelper.call(this, name)));
+  const deps = (config.value.$inject || []).map(name => resolveHelper.call(this, name));
+  const isFactory = strategy === 'factory';
+  const d = isFactory ? config.value(...deps) : new config.value(...deps);
   this.resolutionTrace.pop();
   return d;
 };
 
 module.exports = {
   /**
-   * creates a new instance each time
+   * creates a new instance each time with `new` keyword
+   * Explanation https://codeburst.io/javascript-for-beginners-the-new-operator-cee35beb669e
    * @param dependencyName {string}
    */
+  service: dependencyName => function() {
+    return resolveDependency.call(this, dependencyName, 'service');
+  },
+  /**
+   * return the result of plain function call
+   * @param dependencyName
+   */
   factory: dependencyName => function() {
-    return resolveDependency.call(this, dependencyName);
+    return resolveDependency.call(this, dependencyName, 'factory');
   },
   /**
    * return the same instance of constructor each time
@@ -43,7 +53,7 @@ module.exports = {
     let instance;
     return function() {
       if (!instance) {
-        instance = resolveDependency.call(this, dependencyName);
+        instance = resolveDependency.call(this, dependencyName, 'singleton');
       }
       return instance;
     };
