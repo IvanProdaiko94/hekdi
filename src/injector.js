@@ -48,6 +48,20 @@ Injector.prototype.addImports = function(dependencies) {
  * @return {Map}
  */
 Injector.prototype.register = function(...dependencies) {
+  const _register = deps => {
+    deps.forEach(config => {
+      const dConf = this.getConfigOf(config.name);
+      if (dConf && dConf.strategy === 'constant') {
+        throw new Error(errors.dependencyIsRegistered(config.name));
+      } else if (!strategies.hasOwnProperty(config.strategy)) {
+        throw new Error(errors.incorrectResolutionStrategy(config.strategy, strategies));
+      }
+      config.resolver = strategies[config.strategy](config.name).bind(this);
+      config.belongTo = this.belongTo;
+      this.dependencies.set(config.name, config);
+    });
+  };
+
   const providers = [];
   dependencies = dependencies.filter(config => {
     if (config.strategy === 'provider') {
@@ -56,6 +70,8 @@ Injector.prototype.register = function(...dependencies) {
     }
     return true;
   });
+
+  _register(dependencies);
 
   const providersValues = providers.map(provider => {
     const dConf = provider.value();
@@ -66,20 +82,8 @@ Injector.prototype.register = function(...dependencies) {
   });
 
   if (providersValues.length > 0) {
-    this.register(...providersValues);
+    _register(providersValues);
   }
-
-  dependencies.forEach(config => {
-    const dConf = this.getConfigOf(config.name);
-    if (dConf && dConf.strategy === 'constant') {
-      throw new Error(errors.dependencyIsRegistered(config.name));
-    } else if (!strategies.hasOwnProperty(config.strategy)) {
-      throw new Error(errors.incorrectResolutionStrategy(config.strategy, strategies));
-    }
-    config.resolver = strategies[config.strategy](config.name).bind(this);
-    config.belongTo = this.belongTo;
-    this.dependencies.set(config.name, config);
-  });
 };
 
 /**
