@@ -53,29 +53,5 @@ describe('Module', () => {
         module.injector.resolve('localDependency');
       }).to.throw(ReferenceError);
     });
-
-    it('does not export providers', () => {
-      class Z { }
-      const module = Module.createModule({
-        name: 'SharedModule',
-        declarations: [
-          { name: 'ZProvider',
-            strategy: 'provider',
-            value: () => ({ name: 'Z', strategy: 'service', value: Z })
-          }
-        ],
-        exports: '*'
-      });
-      expect(() => module.injector.resolve('ZProvider')).to.throw(ReferenceError);
-      const another = Module.createModule({
-        name: 'AnotherModule',
-        declarations: [
-          { name: 'val', strategy: 'value', value: 123 }
-        ],
-        imports: [ module ],
-        exports: '*'
-      });
-      expect(another.injector.resolve('Z')).to.be.an.instanceOf(Z);
-    });
   });
 });

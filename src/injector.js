@@ -48,27 +48,6 @@ Injector.prototype.addImports = function(dependencies) {
  * @return {Map}
  */
 Injector.prototype.register = function(...dependencies) {
-  const providers = [];
-  dependencies = dependencies.filter(config => {
-    if (config.strategy === 'provider') {
-      providers.push(config);
-      return false;
-    }
-    return true;
-  });
-
-  const providersValues = providers.map(provider => {
-    const dConf = provider.value();
-    if (dConf.strategy === 'provider') {
-      throw new Error(errors.providerDoNotRegisterProviders(provider.name));
-    }
-    return dConf;
-  });
-
-  if (providersValues.length > 0) {
-    this.register(...providersValues);
-  }
-
   dependencies.forEach(config => {
     const dConf = this.getConfigOf(config.name);
     if (dConf && dConf.strategy === 'constant') {

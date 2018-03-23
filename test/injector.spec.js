@@ -99,35 +99,6 @@ describe('injector', () => {
         expect(d1).to.to.be.an.instanceOf(Dependency1);
       });
 
-      describe('provider', () => {
-        it('register provider', () => {
-          class Y { }
-          class X {
-            static get $inject() {
-              return ['Y'];
-            }
-            constructor(y) {
-              expect(y).to.be.an.instanceOf(Y);
-            }
-          }
-          injector.register(
-            { name: 'X', strategy: 'provider', value: () => ({ name: 'X', strategy: 'service', value: X }) },
-            { name: 'TestProvider', strategy: 'provider', value: () => ({ name: 'Y', strategy: 'service', value: Y }) }
-          );
-          const x = injector.resolve('X');
-          const y = injector.resolve('X');
-          expect(x).to.be.an.instanceOf(X);
-          expect(x).to.not.equal(y);
-          expect(injector.resolve('Y')).to.be.an.instanceOf(Y);
-        });
-        it('throws an error if provider returns provider', () => {
-          expect(() => {
-            injector.register(
-              { name: 'X', strategy: 'provider', value: () => ({ strategy: 'provider', value: 'V' }) }
-            );
-          }).to.throw(Error);
-        });
-      });
 
       it('is unknown strategy', () => {
         expect(() => {
