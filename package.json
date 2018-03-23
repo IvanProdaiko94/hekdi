@@ -1,7 +1,7 @@
 {
   "name": "hekdi",
-  "version": "1.3.12",
-  "description": "Depedency injection framework for node.js",
+  "version": "1.4.0",
+  "description": "Depedency injection framework for koa.js",
   "main": "index.js",
   "scripts": {
     "test": "node ./test/tests_launcher.js"
@@ -11,8 +11,6 @@
   "devDependencies": {
     "chai": "^4.1.1",
     "eslint": "^4.5.0",
-    "express": "^4.16.2",
-    "hapi": "^16.5.2",
     "koa": "^2.3.0",
     "koa-body-parser": "^1.1.2",
     "koa-router": "^7.2.1",
@@ -24,6 +22,7 @@
   },
   "keywords": [
     "nodeart",
+    "framework",
     "di",
     "dependency",
     "injector",
@@ -31,11 +30,7 @@
     "dependency-injection",
     "rest",
     "koa",
-    "koa.js",
-    "express",
-    "express.js",
-    "hapi",
-    "hapi.js"
+    "koa.js"
   ],
   "engines": {
     "node": ">=7.6.0"

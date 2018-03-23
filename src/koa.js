@@ -4,7 +4,7 @@
 
 'use strict';
 
-const DI = require('../di');
+const DI = require('./di');
 
 /**
  * @param app {Koa.application}

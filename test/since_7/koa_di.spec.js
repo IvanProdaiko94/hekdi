@@ -3,12 +3,10 @@ const { expect } = require('chai');
 const Koa = require('koa');
 const Router = require('koa-router');
 const bodyParser = require('koa-body-parser');
-const { createModule } = require('../../src/module');
-const DI = require('../../src/di');
-const koaDI = require('../../src/frameworks/koa');
+const { DI, koaDI, createModule } = require('../../');
+const http = require('http');
 
 describe('KoaDI', () => {
-  const http = require('http');
 
   class Ctrl {
     static get $inject() {
@@ -117,7 +115,8 @@ describe('KoaDI', () => {
       koaDI({
         name: 'MainModule',
         declarations: [
-          { name: 'handler',
+          {
+            name: 'handler',
             strategy: 'value',
             value: async ctx => {
               ctx.body = 'handled';

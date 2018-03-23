@@ -17,12 +17,6 @@ npm i hekdi
 
 ![App Example](assets/draw.png)
 
-## `hekdi` popular frameworks integration:
-
-- [Hapi](./docs/hapi.md)
-- [Express](./docs/express.md) 
-- [Koa](./docs/koa.md) 
-
 ## Basic usage:
 
 ```javascript
@@ -142,3 +136,101 @@ createModule({
 - `alias` - used to create an alias for some dependency.
 - `provider` - function that will be called, to get dependency config. 
 Providers register dependencies before others do. Providers can't be exported from module.
+
+# Koa.js usage:
+
+`hekdi` can be integrated with [koa.js](https://github.com/koajs/koa).
+
+The main concept of framework integration is monkey patching of functions
+that are responsible for requests handling.
+
+While using koa hakdi monkey patches `use` method.
+
+#### Basic usage:
+```javascript
+const Koa = require('koa');
+const { koaDI } = require('hekdi');
+const app = new Koa();
+
+const moduleToBootstrap = {
+  name: 'MainModule',
+  declarations: [
+    { name: 'ctrl', strategy: 'singleton', value: SomeClass },
+    { name: 'echo', 
+      strategy: 'value', 
+      value: async (ctx) => {
+         ctx.body = ctx.request.body;
+      }
+    }
+  ],
+  exports: '*'
+};
+
+koaDI(moduleToBootstrap, app);
+// now di is already bootstrapped and ready to work. 
+// In koa app you can reach di as `app.context.di`
+// In di you can get koa app as `App` dependency.
+app.use({
+  controller: 'ctrl', // if dependency is object
+  action: 'middleware', // you tell which of its methods will be called
+  params: [1, 2, 3] // also you can pass additional params to call if needed
+});
+
+app.use({ action: 'echo' }); 
+// you can reach some function without class creation by passing only action
+// to `use` method
+
+app.use(async (ctx) => { // you still can pass function to `use` method
+  ctx.body = ctx.request.body;
+});
+
+app.listen(3000)
+```
+
+### Usage with router
+While using router the story is almost the same:
+```javascript 
+'use strict';
+
+const Koa = require('koa');
+const Router = require('koa-router');
+const bodyParser = require('koa-body-parser');
+const { koaDI } = require('hekdi');
+
+const app = new Koa();
+const router = new Router();
+
+const moduleToBootstrap = {
+  name: 'MainModule',
+  declarations: [
+    { name: 'ctrl', strategy: 'singleton', value: SomeClass },
+    { name: 'echo', 
+      strategy: 'value', 
+      value: async (ctx) => {
+         ctx.body = ctx.request.body;
+      }
+    }
+  ],
+  exports: '*'
+};
+
+koaDI(moduleToBootstrap, app, router);
+
+app.use(bodyParser());
+
+router
+  .post(['/', '/test'], { action: 'echo'})
+  .get('/', {
+    controller: 'ctrl',
+    action: 'getHandler',
+    params: [1, 2, 3]
+  }).get('/test', async (ctx) => {
+    ctx.body = 'handled';
+  });
+
+  app
+    .use(router.routes())
+    .use(router.allowedMethods());
+
+  app.listen(3000);
+```
