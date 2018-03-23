@@ -1,7 +1,7 @@
 {
   "name": "hekdi",
   "version": "1.4.0",
-  "description": "Depedency injection framework for koa.js",
+  "description": "Depedency injection framework for node integrated with koa.js",
   "main": "index.js",
   "scripts": {
     "test": "node ./test/tests_launcher.js"
