@@ -61,7 +61,7 @@ describe('Module', () => {
         declarations: [
           { name: 'ZProvider',
             strategy: 'provider',
-            value: () => ({ name: 'Z', strategy: 'factory', value: Z })
+            value: () => ({ name: 'Z', strategy: 'service', value: Z })
           }
         ],
         exports: '*'

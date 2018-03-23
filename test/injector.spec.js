@@ -11,10 +11,9 @@ describe('injector', () => {
       injector = new Injector('MOCK');
     });
 
-    class Dependency1 {
-      constructor() {
-        this.name = 'Dependency1';
-      }
+    function Dependency1() {
+      this.name = 'Dependency1';
+      return 'Factory';
     }
 
     class Dependency2 {
@@ -50,14 +49,23 @@ describe('injector', () => {
         expect(ref1).to.deep.equal(ref2);
       });
 
+      it('is service', () => {
+        injector.register(
+          { name: 'D1', strategy: 'service', value: Dependency1 }
+        );
+        const ref1 = injector.resolve('D1');
+        const ref2 = injector.resolve('D1');
+        expect(ref1).to.not.equal(ref2);
+        expect(ref1).to.be.a('object');
+      });
+
       it('is factory', () => {
         injector.register(
           { name: 'D1', strategy: 'factory', value: Dependency1 }
         );
-
-        const ref1 = injector.resolve('D1');
-        const ref2 = injector.resolve('D1');
-        expect(ref1).to.not.equal(ref2);
+        const name = injector.resolve('D1');
+        expect(name).to.be.a('string');
+        expect(name).to.equal('Factory');
       });
 
       it('is value', () => {
@@ -103,8 +111,8 @@ describe('injector', () => {
             }
           }
           injector.register(
-            { name: 'X', strategy: 'provider', value: () => ({ name: 'X', strategy: 'factory', value: X }) },
-            { name: 'TestProvider', strategy: 'provider', value: () => ({ name: 'Y', strategy: 'factory', value: Y }) }
+            { name: 'X', strategy: 'provider', value: () => ({ name: 'X', strategy: 'service', value: X }) },
+            { name: 'TestProvider', strategy: 'provider', value: () => ({ name: 'Y', strategy: 'service', value: Y }) }
           );
           const x = injector.resolve('X');
           const y = injector.resolve('X');
@@ -132,7 +140,7 @@ describe('injector', () => {
       const module = Module.createModule({
         name: 'AnotherModule',
         declarations: [
-          { name: 'dependency', strategy: 'factory',  value: Dependency1 }
+          { name: 'dependency', strategy: 'service',  value: Dependency1 }
         ],
         exports: '*'
       });
@@ -197,10 +205,10 @@ describe('injector', () => {
       const toBeImported = Module.createModule({
         name: 'XModule',
         declarations: [
-          { name: 'C', strategy: 'factory',  value: class C { static get $inject() { return ['D']; } } },
-          { name: 'D', strategy: 'factory',  value: class D { static get $inject() { return ['E']; } } },
-          { name: 'E', strategy: 'factory',  value: class E { static get $inject() { return ['F']; } } },
-          { name: 'F', strategy: 'factory',  value: class F { static get $inject() { return ['C']; } } },
+          { name: 'C', strategy: 'service',  value: class C { static get $inject() { return ['D']; } } },
+          { name: 'D', strategy: 'service',  value: class D { static get $inject() { return ['E']; } } },
+          { name: 'E', strategy: 'service',  value: class E { static get $inject() { return ['F']; } } },
+          { name: 'F', strategy: 'service',  value: class F { static get $inject() { return ['C']; } } },
         ],
         exports: ['C', 'D']
       });
@@ -208,8 +216,8 @@ describe('injector', () => {
       const main = Module.createModule({
         name: 'YModule',
         declarations: [
-          { name: 'A', strategy: 'factory',  value: class A { static get $inject() { return ['B']; } } },
-          { name: 'B', strategy: 'factory',  value: class B { static get $inject() { return ['C', 'D']; } } }
+          { name: 'A', strategy: 'service',  value: class A { static get $inject() { return ['B']; } } },
+          { name: 'B', strategy: 'service',  value: class B { static get $inject() { return ['C', 'D']; } } }
         ],
         imports: [ toBeImported ],
         exports: '*'
@@ -223,10 +231,10 @@ describe('injector', () => {
       const x = Module.createModule({
         name: 'Module X',
         declarations: [
-          { name: 'G', strategy: 'factory',  value: class C { static get $inject() { return ['OK', 'Good', 'H']; } } },
-          { name: 'H', strategy: 'factory',  value: class D { static get $inject() { return ['I']; } } },
-          { name: 'I', strategy: 'factory',  value: class E { static get $inject() { return ['J']; } } },
-          { name: 'J', strategy: 'factory',  value: class F { static get $inject() { return ['G']; } } },
+          { name: 'G', strategy: 'service',  value: class C { static get $inject() { return ['OK', 'Good', 'H']; } } },
+          { name: 'H', strategy: 'service',  value: class D { static get $inject() { return ['I']; } } },
+          { name: 'I', strategy: 'service',  value: class E { static get $inject() { return ['J']; } } },
+          { name: 'J', strategy: 'service',  value: class F { static get $inject() { return ['G']; } } },
           { name: 'OK', strategy: 'constant', value: 123 },
           { name: 'Good', strategy: 'singleton', value: class Good { } },
         ],
@@ -236,10 +244,10 @@ describe('injector', () => {
       const y = Module.createModule({
         name: 'Module Y',
         declarations: [
-          { name: 'C', strategy: 'factory',  value: class C { static get $inject() { return ['D']; } } },
-          { name: 'D', strategy: 'factory',  value: class D { static get $inject() { return ['E']; } } },
-          { name: 'E', strategy: 'factory',  value: class E { static get $inject() { return ['F']; } } },
-          { name: 'F', strategy: 'factory',  value: class F { static get $inject() { return ['G']; } } }
+          { name: 'C', strategy: 'service',  value: class C { static get $inject() { return ['D']; } } },
+          { name: 'D', strategy: 'service',  value: class D { static get $inject() { return ['E']; } } },
+          { name: 'E', strategy: 'service',  value: class E { static get $inject() { return ['F']; } } },
+          { name: 'F', strategy: 'service',  value: class F { static get $inject() { return ['G']; } } }
         ],
         imports: [ x ],
         exports: ['C', 'D']
@@ -248,8 +256,8 @@ describe('injector', () => {
       const z = Module.createModule({
         name: 'Module Z',
         declarations: [
-          { name: 'A', strategy: 'factory',  value: class A { static get $inject() { return ['B']; } } },
-          { name: 'B', strategy: 'factory',  value: class B { static get $inject() { return ['C', 'D']; } } }
+          { name: 'A', strategy: 'service',  value: class A { static get $inject() { return ['B']; } } },
+          { name: 'B', strategy: 'service',  value: class B { static get $inject() { return ['C', 'D']; } } }
         ],
         imports: [ y ],
         exports: '*'
