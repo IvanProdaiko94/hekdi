@@ -13,7 +13,6 @@ DI.prototype.bootstrap = function(moduleConfig) {
   this.main = this.module(moduleConfig);
 };
 
-
 DI.prototype.resolve = function(dependencyName) {
   return this.main.injector.resolve(dependencyName);
 };

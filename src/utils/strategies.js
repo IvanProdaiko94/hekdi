@@ -5,27 +5,25 @@
 
 const errors = require('./errors');
 
-const resolveHelper = function(dependencyName) {
-  if (this.dependencies.has(dependencyName)) {
-    return this.getConfigOf(dependencyName).resolver();
-  }
-  throw new ReferenceError(errors.unmetDependency(this.belongTo.name, dependencyName));
-};
-
-const resolveDependency = function(dependencyName, strategy) {
+const resolveDependency = function(dependencyName, trace) {
   const config = this.getConfigOf(dependencyName);
-  if (this.resolutionTrace.indexOf(dependencyName) !== -1) {
-    this.resolutionTrace.push(dependencyName);
-    throw {
-      moduleName: this.belongTo.name,
-      resolutionTrace: this.resolutionTrace
-    };
+  if (config === undefined) {
+    throw new ReferenceError(errors.unmetDependency(this.belongTo.name, dependencyName));
+  } else if (trace.includes(dependencyName)) {
+    trace.push(dependencyName);
+    throw new Error(errors.circularDependency(this.belongTo.name, dependencyName, trace));
   }
-  this.resolutionTrace.push(dependencyName);
-  const deps = (config.value.$inject || []).map(name => resolveHelper.call(this, name));
-  const isFactory = strategy === 'factory';
-  const d = isFactory ? config.value(...deps) : new config.value(...deps);
-  this.resolutionTrace.pop();
+  trace.push(dependencyName);
+  const mayHaveDeps = ['service', 'factory', 'singleton'].includes(config.strategy);
+  let d;
+  if (mayHaveDeps) {
+    const deps = (config.value.$inject || []).map(name => this.getConfigOf(name).resolver(trace));
+    const isFactory = config.strategy === 'factory';
+    d = isFactory ? config.value(...deps) : new config.value(...deps);
+  } else {
+    d = config.value;
+  }
+  trace.pop();
   return d;
 };
 
@@ -35,25 +33,25 @@ module.exports = {
    * Explanation https://codeburst.io/javascript-for-beginners-the-new-operator-cee35beb669e
    * @param dependencyName {string}
    */
-  service: dependencyName => function() {
-    return resolveDependency.call(this, dependencyName, 'service');
+  service: dependencyName => function(trace) {
+    return resolveDependency.call(this, dependencyName, trace);
   },
   /**
    * return the result of plain function call
    * @param dependencyName
    */
-  factory: dependencyName => function() {
-    return resolveDependency.call(this, dependencyName, 'factory');
+  factory: dependencyName => function(trace) {
+    return resolveDependency.call(this, dependencyName, trace);
   },
   /**
    * return the same instance of constructor each time
    * @param dependencyName {string}
    */
-  singleton: dependencyName => {
+  singleton: (dependencyName) => {
     let instance;
-    return function() {
+    return function(trace) {
       if (!instance) {
-        instance = resolveDependency.call(this, dependencyName, 'singleton');
+        instance = resolveDependency.call(this, dependencyName, trace);
       }
       return instance;
     };
@@ -62,23 +60,22 @@ module.exports = {
    * return link on the of the value
    * @param dependencyName {string}
    */
-  value: dependencyName => function() {
-    return this.getConfigOf(dependencyName).value;
+  value: dependencyName => function(trace) {
+    return resolveDependency.call(this, dependencyName, trace);
   },
   /**
    * return link on the of the value
    * @param dependencyName {string}
    */
-  constant: dependencyName => function() {
-    return this.getConfigOf(dependencyName).value;
+  constant: dependencyName => function(trace) {
+    return resolveDependency.call(this, dependencyName, trace);
   },
   /**
    * return other dependency by using value as a name
    * @param dependencyName {string}
    */
-  alias: dependencyName => function() {
+  alias: dependencyName => function(trace) {
     const { value } = this.getConfigOf(dependencyName);
-    const { name } = this.getConfigOf(value);
-    return resolveHelper.call(this, name);
+    return resolveDependency.call(this, value, trace);
   }
 };

@@ -130,7 +130,7 @@ describe('injector', () => {
         ],
         exports: '*'
       });
-      expect(() => main.injector.resolve('A')).to.throw(Error, /MainModule: A -> A/);
+      expect(() => main.injector.resolve('A')).to.throw(Error, /MainModule/, /A -> A/);
     });
 
     it('not accept simple circular dependency', () => {
@@ -142,7 +142,7 @@ describe('injector', () => {
         ],
         exports: '*'
       });
-      expect(() => main.injector.resolve('A')).to.throw(Error, /MainModule: A -> B -> A/);
+      expect(() => main.injector.resolve('A')).to.throw(Error, /MainModule/, /A -> B -> A/);
     });
 
     it('not accept complex circular dependency', () => {
@@ -155,7 +155,7 @@ describe('injector', () => {
         ],
         exports: '*'
       });
-      expect(() => main.injector.resolve('A')).to.throw(Error, /MainModule: A -> B -> C -> A/);
+      expect(() => main.injector.resolve('A')).to.throw(Error, /MainModule/, /A -> B -> C -> A/);
     });
 
     it('create correct error for process', () => {
@@ -194,7 +194,7 @@ describe('injector', () => {
         exports: '*'
       });
 
-      expect(() => main.injector.resolve('A')).to.throw(Error, /XModule: C -> D -> E -> F -> C/);
+      expect(() => main.injector.resolve('A')).to.throw(Error, /XModule/, /A -> B -> C -> D -> E -> F -> C/);
     });
 
 
@@ -233,7 +233,9 @@ describe('injector', () => {
         imports: [ y ],
         exports: '*'
       });
-      expect(() => z.injector.resolve('A')).to.throw(Error, /Module X: G -> H -> I -> J -> G/);
+      expect(() => z.injector.resolve('A')).to.throw(
+        Error, /Module X/, /A -> B -> C -> D -> E -> F -> G -> H -> I -> J -> G/
+      );
     });
   });
 });

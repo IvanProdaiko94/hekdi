@@ -7,7 +7,7 @@
 const DI = require('./di');
 
 /**
- * @param app {Koa.application}
+ * @param app {Koa.Application}
  * @param original {Function}
  * @returns {Function}
  */

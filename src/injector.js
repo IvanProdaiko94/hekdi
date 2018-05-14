@@ -10,7 +10,6 @@ const strategies = require('./utils/strategies');
 function Injector(module) {
   this.belongTo = module;
   this.dependencies = new Map();
-  this.resolutionTrace = [];
 }
 
 /**
@@ -18,16 +17,12 @@ function Injector(module) {
  * @return {*}
  */
 Injector.prototype.resolve = function(dependencyName) {
-  if (this.dependencies.has(dependencyName)) {
-    try {
-      const dependency = this.getConfigOf(dependencyName).resolver();
-      this.resolutionTrace = [];
-      return dependency;
-    } catch (message) {
-      throw new Error(errors.circularDependency(this.belongTo.name, dependencyName, message));
-    }
+  const trace = [];
+  const config = this.getConfigOf(dependencyName);
+  if (config === undefined) {
+    throw new ReferenceError(errors.unmetDependency(this.belongTo.name, dependencyName));
   }
-  throw new ReferenceError(errors.unmetDependency(this.belongTo.name, dependencyName));
+  return config.resolver(trace);
 };
 
 /**
