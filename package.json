@@ -1,6 +1,6 @@
 {
   "name": "hekdi",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Depedency injection framework for node integrated with koa.js",
   "main": "index.js",
   "scripts": {
@@ -20,6 +20,7 @@
     "type": "git",
     "url": "git@github.com:IvanProdaiko94/hekdi.git"
   },
+  "typings": "index.d.ts",
   "keywords": [
     "nodeart",
     "framework",
@@ -34,5 +35,9 @@
   ],
   "engines": {
     "node": ">=7.6.0"
+  },
+  "dependencies": {
+    "@types/koa": "^2.0.45",
+    "@types/koa-router": "^7.0.28"
   }
 }

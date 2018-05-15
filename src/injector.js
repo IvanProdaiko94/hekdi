@@ -40,7 +40,6 @@ Injector.prototype.addImports = function(dependencies) {
 
 /**
  * @param dependencies {Object<{name: string, strategy: string: value: any}>}
- * @return {Map}
  */
 Injector.prototype.register = function(...dependencies) {
   dependencies.forEach(config => {
