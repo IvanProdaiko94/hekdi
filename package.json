@@ -1,6 +1,6 @@
 {
   "name": "hekdi",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Depedency injection framework for node integrated with koa.js",
   "main": "index.js",
   "scripts": {

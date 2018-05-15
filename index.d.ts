@@ -35,11 +35,6 @@ declare class DI {
     static integrateWith(app: any): any
 }
 
-declare module "hekdi" {
-    const exp = {
-        koaDI: (bootstrapModule: Module | ModuleConfig, app: Application, router?: Router) => undefined,
-        createModule: Module.createModule,
-        DI: DI
-    };
-    export = exp;
-}
+export function koaDI(bootstrapModule: Module | ModuleConfig, app: Application, router?: Router): undefined
+export function createModule(config: ModuleConfig): Module
+export function DI(): DI
