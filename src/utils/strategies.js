@@ -6,7 +6,7 @@
 const errors = require('./errors');
 
 const resolveDependency = function(dependencyName, trace) {
-  const config = this.getConfigOf(dependencyName);
+  let config = this.getConfigOf(dependencyName);
   if (config === undefined) {
     throw new ReferenceError(errors.unmetDependency(this.belongTo.name, dependencyName));
   } else if (trace.includes(dependencyName)) {
@@ -14,6 +14,10 @@ const resolveDependency = function(dependencyName, trace) {
     throw new Error(errors.circularDependency(this.belongTo.name, dependencyName, trace));
   }
   trace.push(dependencyName);
+  while (config.strategy === 'alias') {
+    trace.push(config.value);
+    config = this.getConfigOf(config.value);
+  }
   const mayHaveDeps = ['service', 'factory', 'singleton'].includes(config.strategy);
   let d;
   if (mayHaveDeps) {
@@ -75,7 +79,6 @@ module.exports = {
    * @param dependencyName {string}
    */
   alias: dependencyName => function(trace) {
-    const { value } = this.getConfigOf(dependencyName);
-    return resolveDependency.call(this, value, trace);
+    return resolveDependency.call(this, dependencyName, trace);
   }
 };

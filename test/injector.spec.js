@@ -90,13 +90,50 @@ describe('injector', () => {
         }).to.throw(Error);
       });
 
-      it('is alias', () => {
-        injector.register(
-          { name: 'D1', strategy: 'singleton', value: Dependency1 },
-          { name: 'Alias', strategy: 'alias', value: 'D1' }
-        );
-        const d1 = injector.resolve('Alias');
-        expect(d1).to.to.be.an.instanceOf(Dependency1);
+      describe('is alias', () => {
+        let injector;
+
+        beforeEach(() => {
+          injector = new Injector('MOCK');
+        });
+
+        it('is simple alias', () => {
+          injector.register(
+            { name: 'D1', strategy: 'singleton', value: Dependency1 },
+            { name: 'Alias', strategy: 'alias', value: 'D1' }
+          );
+          const d1 = injector.resolve('Alias');
+          expect(d1).to.to.be.an.instanceOf(Dependency1);
+        });
+
+        it('resolves several aliases linkage', () => {
+          class X { }
+          injector.register(
+            { name: 'Dep', strategy: 'singleton', value: X },
+            { name: 'D', strategy: 'alias', value: 'Dep' },
+            { name: 'Al', strategy: 'alias', value: 'D' }
+          );
+          expect(injector.resolve('Al')).to.to.be.an.instanceOf(X);
+        });
+
+        it('resolves several aliases linkage with interception', () => {
+          class Y { }
+          class X {
+            static get $inject() {
+              return ['Second'];
+            }
+            constructor(dep) {
+              expect(dep).to.to.be.an.instanceOf(Y);
+            }
+          }
+          injector.register(
+            { name: 'Y', strategy: 'singleton', value: Y },
+            { name: 'X', strategy: 'singleton', value: X },
+            { name: '1', strategy: 'alias', value: '2' },
+            { name: '2', strategy: 'alias', value: 'X' },
+            { name: '3', strategy: 'alias', value: 'Y' }
+          );
+        });
       });
 
 
