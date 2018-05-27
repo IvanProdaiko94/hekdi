@@ -31,22 +31,22 @@ const resolveDependency = function(dependencyName, trace) {
   return d;
 };
 
+const resolve = dependencyName => function(trace) {
+  return resolveDependency.call(this, dependencyName, trace);
+};
+
 module.exports = {
   /**
    * creates a new instance each time with `new` keyword
    * Explanation https://codeburst.io/javascript-for-beginners-the-new-operator-cee35beb669e
    * @param dependencyName {string}
    */
-  service: dependencyName => function(trace) {
-    return resolveDependency.call(this, dependencyName, trace);
-  },
+  service: resolve,
   /**
    * return the result of plain function call
    * @param dependencyName
    */
-  factory: dependencyName => function(trace) {
-    return resolveDependency.call(this, dependencyName, trace);
-  },
+  factory: resolve,
   /**
    * return the same instance of constructor each time
    * @param dependencyName {string}
@@ -64,21 +64,15 @@ module.exports = {
    * return link on the of the value
    * @param dependencyName {string}
    */
-  value: dependencyName => function(trace) {
-    return resolveDependency.call(this, dependencyName, trace);
-  },
+  value: resolve,
   /**
    * return link on the of the value
    * @param dependencyName {string}
    */
-  constant: dependencyName => function(trace) {
-    return resolveDependency.call(this, dependencyName, trace);
-  },
+  constant: resolve,
   /**
    * return other dependency by using value as a name
    * @param dependencyName {string}
    */
-  alias: dependencyName => function(trace) {
-    return resolveDependency.call(this, dependencyName, trace);
-  }
+  alias: resolve
 };

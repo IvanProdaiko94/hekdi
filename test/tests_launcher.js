@@ -4,16 +4,27 @@
 
 'use strict';
 
-const { spawn } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const Mocha = require('mocha');
 
 const nodeVersion = process.versions.node.split('.').map(Number);
 
-const files = nodeVersion[0] > 6 ? './test/**/*.spec.js' : './test/*.spec.js';
+// Instantiate a Mocha instance.
+const mocha = new Mocha();
+const testDir = 'test';
 
-const child = spawn('mocha', [files]);
+fs.readdirSync(testDir).filter(file => {
+  if (nodeVersion[0] <= 6 && file.indexOf('koa') !== -1) {
+    return false;
+  }
+  return file.substr(-8) === '.spec.js';
 
-child.stdout.on('data', (data) => console.log(data.toString()));
+}).forEach(file => {
+  mocha.addFile(path.join(testDir, file));
+});
 
-child.stderr.on('data', (data) => console.error(data.toString()));
-
-child.on('exit', exitCode => process.exit(exitCode));
+mocha.run(failures => {
+  process.exitCode = failures ? -1 : 0;
+  process.exit(); // exit with non-zero status if there were failures
+});

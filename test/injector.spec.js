@@ -8,7 +8,7 @@ describe('injector', () => {
   describe('register dependency', () => {
     let injector;
     beforeEach(() => {
-      injector = new Injector('MOCK');
+      injector = new Injector({ name: 'MOCK' });
     });
 
     function Dependency1() {
@@ -94,7 +94,7 @@ describe('injector', () => {
         let injector;
 
         beforeEach(() => {
-          injector = new Injector('MOCK');
+          injector = new Injector({ name: 'MOCK' });
         });
 
         it('is simple alias', () => {
@@ -120,7 +120,7 @@ describe('injector', () => {
           class Y { }
           class X {
             static get $inject() {
-              return ['Second'];
+              return ['3'];
             }
             constructor(dep) {
               expect(dep).to.to.be.an.instanceOf(Y);
@@ -133,6 +133,7 @@ describe('injector', () => {
             { name: '2', strategy: 'alias', value: 'X' },
             { name: '3', strategy: 'alias', value: 'Y' }
           );
+          injector.resolve('1');
         });
       });
 
