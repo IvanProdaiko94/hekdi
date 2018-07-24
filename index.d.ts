@@ -19,7 +19,7 @@ declare interface ModuleConfig {
     name: string,
     declarations?: DependencyConfig[],
     imports?: Module[],
-    exports?: string[]
+    exports?: string | string[]
 }
 
 declare class Module {
