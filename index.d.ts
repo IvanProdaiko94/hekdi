@@ -1,6 +1,5 @@
 import * as Application from 'koa';
 import * as Router from 'koa-router';
-import '@types/es6-collections';
 
 declare interface DependencyConfig {
     name: string,
@@ -11,7 +10,7 @@ declare interface DependencyConfig {
 declare class Injector {
     constructor(module: Module)
     resolve(dependencyName: string): any
-    addImports(dependencies: Map<string, DependencyConfig>)
+    addImports(dependencies: any)
     register(...dependencies: DependencyConfig[])
     getConfigOf(dependencyName: string): DependencyConfig
 }

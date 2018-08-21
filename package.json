@@ -1,6 +1,6 @@
 {
   "name": "hekdi",
-  "version": "1.5.7",
+  "version": "1.5.9",
   "description": "Depedency injection framework for node integrated with koa.js",
   "main": "index.js",
   "scripts": {
@@ -37,7 +37,6 @@
     "node": ">=7.6.0"
   },
   "dependencies": {
-    "@types/es6-collections": "^0.5.31",
     "@types/koa": "^2.0.45",
     "@types/koa-router": "^7.0.28"
   }
