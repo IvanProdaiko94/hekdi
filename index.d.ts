@@ -1,16 +1,17 @@
-import Application from "@types/koa"
-import Router from "@types/koa-router"
+import * as Application from 'koa';
+import * as Router from 'koa-router';
+import '@types/es6-collections';
 
 declare interface DependencyConfig {
     name: string,
-    strategy: "service" | "factory" | "singleton" | "value" | "constant" | "alias",
+    strategy: 'service' | 'factory' | 'singleton' | 'value' | 'constant' | 'alias',
     value: any
 }
 
 declare class Injector {
     constructor(module: Module)
     resolve(dependencyName: string): any
-    addImports(dependencies: Map<DependencyConfig>)
+    addImports(dependencies: Map<string, DependencyConfig>)
     register(...dependencies: DependencyConfig[])
     getConfigOf(dependencyName: string): DependencyConfig
 }
@@ -28,6 +29,7 @@ declare class Module {
 }
 
 declare class DI {
+    constructor();
     module(config: Module | ModuleConfig): Module
     bootstrap(config: Module | ModuleConfig)
     resolve(dependencyName: string): any
@@ -37,4 +39,3 @@ declare class DI {
 
 export function koaDI(bootstrapModule: Module | ModuleConfig, app: Application, router?: Router): undefined
 export function createModule(config: ModuleConfig): Module
-export function DI(): DI
