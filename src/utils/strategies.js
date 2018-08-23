@@ -21,7 +21,13 @@ const resolveDependency = function(dependencyName, trace) {
   const mayHaveDeps = ['service', 'factory', 'singleton'].includes(config.strategy);
   let d;
   if (mayHaveDeps) {
-    const deps = (config.value.$inject || []).map(name => this.getConfigOf(name).resolver(trace));
+    const deps = (config.value.$inject || []).map(name => {
+      const d = this.getConfigOf(name);
+      if (d === undefined) {
+        throw new ReferenceError(errors.unmetDependency(this.belongTo.name, d.name));
+      }
+      return d.resolver(trace);
+    });
     const isFactory = config.strategy === 'factory';
     d = isFactory ? config.value(...deps) : new config.value(...deps);
   } else {
