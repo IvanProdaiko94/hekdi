@@ -24,7 +24,7 @@ const resolveDependency = function(dependencyName, trace) {
     const deps = (config.value.$inject || []).map(name => {
       const d = this.getConfigOf(name);
       if (d === undefined) {
-        throw new ReferenceError(errors.unmetDependency(this.belongTo.name, d.name));
+        throw new ReferenceError(errors.unmetDependency(this.belongTo.name, name));
       }
       return d.resolver(trace);
     });
